@@ -1,4 +1,4 @@
-package thisPackage;
+package oldStuff;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,29 +20,35 @@ public class Display extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        int[] coords = new int[] {200, 300};
-        int spiralScale = 20;
-        int letterScale = (int) (spiralScale * 1);
+        int[] coords = new int[] {300, 400};
+        int spiralScale = 11 * 2;
+        int letterScale = 15;
         int startingAngle = 89;
         boolean isClockwise = true;
+        double binetNumber = 1.3;
         NextLetter next = new NextLetter(coords, startingAngle, spiralScale, letterScale, !isClockwise);
 
 
         g.setColor(new Color(110, 90, 40));
         g.fillRect(0,0, coords[0] * 3, coords[1] * 3);
 
+        g.setColor(Color.BLACK);
+        g.drawLine(200,100,200,400);
+
+        GoldenRatio.addGoldenSpiral(g, coords, spiralScale, true, binetNumber, startingAngle);
         randomStuff(g, coords, spiralScale, letterScale, next);
 //        String sentence = "Laevi: If the anglerfish catches you, you're eaten.";
 //        translateSentence(sentence, g, coords, spiralScale, letterScale, next);
 
     }
 
+    @Deprecated
     private void randomStuff(Graphics g, int[] coords, int spiralScale, int letterScale, NextLetter next) {
 
-//        GoldenRatio.addGoldenSpiral(g, coords, spiralScale, true);
+//
 
         int[] oldCoords = coords;
-        for (int i = 0; i < 70; i++) {
+        for (int i = 0; i < 50; i++) {
             oldCoords = coords;
             coords = next.stepForward();
             BaseShape.getRandomShape().drawLetter(g, coords, oldCoords, next.getDirection(), letterScale, AddOnShape.getRandomShape());

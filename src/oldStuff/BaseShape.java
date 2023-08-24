@@ -1,4 +1,4 @@
-package thisPackage;
+package oldStuff;
 
 import java.awt.*;
 
@@ -10,7 +10,7 @@ public enum BaseShape {
     M(new char[] {'i','k','s','w'}),
     DIAMOND(new char[] {'g','l','x','y'});
 
-    private char[] letters;
+    private final char[] letters;
     BaseShape(char[] letters) {
         this.letters = letters;
     }

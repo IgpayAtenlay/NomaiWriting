@@ -1,20 +1,20 @@
-package thisPackage;
+package oldStuff;
+
+import newStuff.util.Binet;
 
 import java.awt.*;
 
+@Deprecated
 public class GoldenRatio {
 
-    public static void addGoldenSpiral(Graphics g, int[] startingCoords, int otherScale, boolean isClockwise) {
+    public static void addGoldenSpiral(Graphics g, int[] startingCoords, int scale, boolean isClockwise, double binetNumber, int direction) {
         g.setColor(Color.BLACK);
         Graphics2D g2D = (Graphics2D) g;
         g2D.setStroke(new BasicStroke(5));
         int[] coords = startingCoords.clone();
-        int scale = otherScale * 2;
 
-        int[] fibonacci = new int[] {1, 1};
-        int direction = 0;
-        while (fibonacci[1] < 30) {
-            coords = drawArcStarting(g, coords, fibonacci[1] * scale, direction, isClockwise);
+        for (int i = 0; i < 17; i++) {
+            coords = drawArcStarting(g, coords, (int) (Binet.getBinetValue(i, binetNumber) * scale), direction, isClockwise);
             if (isClockwise) {
                 if (direction < 3) {
                     direction++;
@@ -28,10 +28,6 @@ public class GoldenRatio {
                     direction--;
                 }
             }
-            int temp = fibonacci[1];
-            fibonacci[1] = fibonacci[0] + fibonacci[1];
-            fibonacci[0] = temp;
-
         }
     }
 
