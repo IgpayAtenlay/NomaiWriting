@@ -1,7 +1,9 @@
 package newStuff.spiral;
 
+import newStuff.util.CCoord;
+
 public class LetterPoints {
-    public static int[][] getLetterPoints(int[][] anchorPoints) {
+    public static CCoord[] getLetterPoints(CCoord[] anchorPoints) {
         return anchorPoints.clone();
     }
 

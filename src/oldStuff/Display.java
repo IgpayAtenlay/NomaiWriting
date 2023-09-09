@@ -37,8 +37,8 @@ public class Display extends JPanel {
 
         GoldenRatio.addGoldenSpiral(g, coords, spiralScale, true, binetNumber, startingAngle);
         randomStuff(g, coords, spiralScale, letterScale, next);
-//        String sentence = "Laevi: If the anglerfish catches you, you're eaten.";
-//        translateSentence(sentence, g, coords, spiralScale, letterScale, next);
+        String sentence = "Laevi: If the anglerfish catches you, you're eaten.";
+        translateSentence(sentence, g, coords, spiralScale, letterScale, next);
 
     }
 

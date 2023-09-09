@@ -1,56 +1,79 @@
 package newStuff.characters;
 
+import newStuff.util.*;
+
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Characters {
-    private final Graphics g;
-    protected final int[] start;
-    protected final int direction;
-    private final int size;
+
     protected final boolean isLeft;
+    protected final Location location;
+    protected List<Location> lines;
+    protected List<Location> circles;
 //    constructor
-    public Characters(Graphics g, int[] start, int direction, int size, boolean isLeft) {
-        this.g = g;
-        this.start = start;
-        this.direction = direction;
-        this.size = size;
+    public Characters(CCoord start, int direction, int size, boolean isLeft) {
+        this(new Location(start, direction, size), isLeft);
+    }
+    public Characters(Location location, boolean isLeft) {
         this.isLeft = isLeft;
+        this.location = location;
+        this.lines = new ArrayList<>();
+        this.circles = new ArrayList<>();
     }
 //    drawing lines
-    protected void drawLine(int [] start, int[] end) {
-        g.drawLine(start[0], start[1], end[0], end[1]);
+    protected void planLine(CCoord start, CCoord end) {
+        lines.add(new Location(start, end));
     }
 
-    protected int[] drawLine(int[] start, int direction, int length) {
-        int[] end = getNewCoords(start, direction, length);
-        drawLine(start, end);
+    protected CCoord planLine(CCoord start, double direction, double length) {
+        CCoord end = getNewCoords(start, direction, length);
+        planLine(start, end);
+        return end;
+    }
+
+    protected void planCircle(CCoord start, CCoord end) {
+        circles.add(new Location(start, end));
+    }
+
+    protected CCoord planCircle(CCoord start, double direction, double length) {
+        CCoord end = getNewCoords(start, direction, length);
+        planCircle(start, end);
         return end;
     }
 //    transform variables
-    protected int[] getNewCoords(int[] start, int direction, int length) {
-        int realDirection = this.direction + direction * (isLeft ? 1 : -1);
-        int realLength = (int) ((double) length / 100 * size);
-        int[] end = new int[2];
-        end[0] = (int) (start[0] + Math.cos(directionInRad(realDirection)) * realLength);
-        end[1] = (int) (start[1] - Math.sin(directionInRad(realDirection)) * realLength);
+    protected CCoord getNewCoords(CCoord start, double direction, double length) {
+        double realDirection = location.getDirection() + direction * (isLeft ? 1 : -1);
+        double realLength = length / 100 * location.getLength();
+        CCoord end = new CCoord();
+        end.setX((start.getX() + Math.cos(directionInRad(realDirection)) * realLength));
+        end.setY((start.getY() - Math.sin(directionInRad(realDirection)) * realLength));
         return end;
     }
 
-    private int[] getRealCoords(int[] relativeCoords) {
-        int[] realCoords = new int[2];
-        double distance = Math.sqrt(Math.pow(relativeCoords[0], 2) + Math.pow(relativeCoords[1], 2));
-        realCoords[0] = (int) (start[0] + Math.cos(Math.atan((double) relativeCoords[1] / relativeCoords[0]) + directionInRad(direction)) * distance);
-        realCoords[1] = (int) (start[1] + Math.sin(Math.atan((double) relativeCoords[1] / relativeCoords[0]) + directionInRad(direction)) * distance);
+    private CCoord getRealCoords(CCoord relativeCoords) {
+        CCoord realCoords = new CCoord();
+        double distance = Math.sqrt(Math.pow(relativeCoords.getX(), 2) + Math.pow(relativeCoords.getY(), 2));
+        realCoords.setX(location.getStart().getX() + Math.cos(Math.atan((double) relativeCoords.getY() / relativeCoords.getX()) + directionInRad(location.getDirection())) * distance);
+        realCoords.setY(location.getStart().getY() + Math.sin(Math.atan((double) relativeCoords.getY() / relativeCoords.getX()) + directionInRad(location.getDirection())) * distance);
         return realCoords;
     }
 
-    private double directionInRad(int degree) {
+    private double directionInRad(double degree) {
         return degree * Math.PI / 180;
     }
-//    abstract methods
-    protected abstract void drawCharacter();
-
-    public int getSize() {
-        return size;
+    protected void drawCharacter(Graphics g) {
+        planCharacter();
+        lines.forEach(location -> g.drawLine((int) location.getStart().getX(), (int) location.getStart().getY(), (int) location.getEnd().getX(), (int) location.getEnd().getY()));
+        for (Location location: circles) {
+            CCoord middle = location.getMidpoint();
+            double radius = middle.distance(location.getStart());
+            CCoord circleLocation = new CCoord(middle.getX() - radius, middle.getY() - radius);
+            g.drawOval((int) circleLocation.getX(), (int) circleLocation.getY(), (int) radius * 2, (int) radius * 2);
+        }
     }
+//    abstract methods
+    protected abstract void planCharacter();
+//
 }

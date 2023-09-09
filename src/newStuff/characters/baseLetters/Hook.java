@@ -1,16 +1,17 @@
 package newStuff.characters.baseLetters;
 
-import java.awt.*;
+import newStuff.util.CCoord;
+import newStuff.util.PolarCoord;
 
 public class Hook extends BaseLetters{
 
-    public Hook(Graphics g, int[] start, int[] end, boolean isLeft) {
-        super(g, start, end, isLeft, new int[][] {}, 90);
+    public Hook(CCoord start, CCoord end, boolean isLeft) {
+        super(start, end, isLeft, new PolarCoord[]{}, 90);
     }
 
     @Override
-    public int[] getAddOnCoords() {
-        return start.clone();
+    public CCoord getAddOnCoords() {
+        return location.getStart();
     }
 
 //    @Override

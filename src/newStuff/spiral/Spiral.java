@@ -1,8 +1,10 @@
 package newStuff.spiral;
 
+import newStuff.util.CCoord;
+
 public class Spiral {
 //    visual
-    private int[] start;
+    private CCoord start;
     private int direction;
     private boolean isCounterclockwise;
     private int maxSize;
@@ -13,11 +15,10 @@ public class Spiral {
     private int spiralScale;
     private int binetIndex;
 //    points
-    private int[][] anchorPoints;
-    private int[][] letterPoints;
+    private CCoord[] anchorPoints;
+    private CCoord[] letterPoints;
 
-
-    public Spiral(int[] start, int direction, boolean isCounterclockwise, int numAnchorPoints, int maxSize, int letterSize) {
+    public Spiral(CCoord start, int direction, boolean isCounterclockwise, int numAnchorPoints, int maxSize, int letterSize) {
         this.start = start;
         this.direction = direction;
         this.isCounterclockwise = isCounterclockwise;
@@ -42,7 +43,7 @@ public class Spiral {
         this.letterPoints = LetterPoints.getLetterPoints(this.anchorPoints);
     }
 
-    public int[][] getLetterPoints() {
+    public CCoord[] getLetterPoints() {
         return letterPoints;
     }
 }

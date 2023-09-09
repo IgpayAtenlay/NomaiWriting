@@ -1,6 +1,7 @@
 package newStuff.display;
 
 import newStuff.translation.Paragraph;
+import newStuff.util.CCoord;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,19 +21,33 @@ public class Display extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        int[] start = new int[] {200, 600};
+//        set spiral dimentions and stuff
+        CCoord start = new CCoord(200, 600);
         int direction = 0;
         boolean isCounterClockwise = true;
         int numAnchorPoints = 50;
         int letterSize = 20;
         int maxSize = numAnchorPoints * letterSize * 2 / 5;
 
-        g.drawLine(start[0], start[1], start[0], start[1] - maxSize);
-        g.drawLine(start[0], start[1], start[0] + letterSize, start[1]);
+//        make background
+        g.setColor(new Color(110, 90, 40));
+        g.fillRect(0, 0, 600, 800);
+//        set looks
+        Graphics2D g2D = (Graphics2D) g;
+        g2D.setStroke(new BasicStroke(2));
+        g.setColor(new Color(140, 130, 255));
 
-        Paragraph paragraph = new Paragraph("gggggggggggggggggggggggggggggggggggggg");
+//        g.drawLine((int) start.getX(), (int) start.getY(), (int) start.getX(), (int) start.getY() - maxSize);
+//        g.drawLine((int) start.getX(), (int) start.getY(), (int) start.getX() + letterSize, (int) start.getY());
+
+        String str = "The big red fox jumped over lazy dogs";
+
+        Paragraph paragraph = new Paragraph(str);
         paragraph.createSpiral(start, direction, isCounterClockwise, maxSize, letterSize);
         paragraph.drawText(g);
+//        DrawPoints.drawPoints(g, paragraph.getLetterPoints(), Color.GREEN);
+//        Hex.drawCharacter(g, new Coord(100, 200), new Coord(200, 200),true, 'i');
+//        int y = 200 - 40 * 2;
+//        g.drawLine(0, y,40 * 2, y);
     }
 }

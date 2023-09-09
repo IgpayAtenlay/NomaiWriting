@@ -1,15 +1,18 @@
 package newStuff.characters.baseLetters;
 
-import java.awt.*;
+import newStuff.util.CCoord;
+import newStuff.util.PolarCoord;
 
 public class ZigZag extends BaseLetters{
 
-    public ZigZag(Graphics g, int[] start, int[] end, boolean isLeft) {
-        super(g, start, end, isLeft, new int[][] { {0, 25}, {60, 50}, {-150, (int) (50 * Math.sqrt(3))}, {150, 50} }, 90);
+    private static final double angle = 75;
+
+    public ZigZag(CCoord start, CCoord end, boolean isLeft) {
+        super(start, end, isLeft, PolarCoord.createPolarCoords(0, 100.0 / 6, angle, 100.0 / 6 / Math.cos(angle / 180 * Math.PI), -angle * 2, 100.0 / 6 / Math.cos(angle / 180 * Math.PI) * 2, angle * 2, 100.0 / 6 / Math.cos(angle / 180 * Math.PI)), 90);
     }
 
-    public int[] getAddOnCoords() {
-        int[] temp = getNewCoords(start, midpoints[0][0], midpoints[0][1]);
-        return getNewCoords(temp, midpoints[1][0], midpoints[1][1]);
+    public CCoord getAddOnCoords() {
+        CCoord temp = getNewCoords(location.getStart(), midpoints[0].getDirection(), midpoints[0].getPercentLength());
+        return getNewCoords(temp, midpoints[1].getDirection(), midpoints[1].getPercentLength());
     }
 }

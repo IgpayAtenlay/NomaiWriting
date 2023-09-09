@@ -1,16 +1,21 @@
 package newStuff.characters.baseLetters;
 
-import java.awt.*;
+import newStuff.util.CCoord;
+import newStuff.util.PolarCoord;
 
 public class Nib extends BaseLetters{
 
-    public Nib(Graphics g, int[] start, int[] end, boolean isLeft) {
-        super(g, start, end, isLeft, new int[][] {{0, 33}, {90, 33}, {-90, 33}, {-90, 33}}, 90);
+    public Nib(CCoord start, CCoord end, boolean isLeft) {
+        super(start, end, isLeft, PolarCoord.createPolarCoords(0, 35, 90, 45, -90, 30, -90, 45), 90);
     }
 
-    public int[] getAddOnCoords() {
-        int[] temp = getNewCoords(start, midpoints[0][0], midpoints[0][1]);
-        temp = getNewCoords(temp, midpoints[1][0], midpoints[1][1]);
-        return getNewCoords(temp, midpoints[2][0], midpoints[2][1] / 2);
+    public CCoord getAddOnCoords() {
+        double direction = midpoints[0].getDirection();
+        CCoord temp = getNewCoords(location.getStart(), direction, midpoints[0].getPercentLength());
+        direction += midpoints[1].getDirection();
+        temp = getNewCoords(temp, direction, midpoints[1].getPercentLength());
+        direction += midpoints[2].getDirection();
+        temp = getNewCoords(temp, direction, midpoints[2].getPercentLength() / 2);
+        return new CCoord(temp.getX(), temp.getY());
     }
 }

@@ -2,6 +2,7 @@ package newStuff.translation;
 
 import newStuff.characters.InLine;
 import newStuff.spiral.Spiral;
+import newStuff.util.CCoord;
 
 import java.awt.*;
 
@@ -22,16 +23,22 @@ public class Paragraph {
         this.future = future;
     }
 
-    public void createSpiral(int[] start, int direction, boolean isCounterClockwise, int maxSize, int letterSize) {
+    public void createSpiral(CCoord start, int direction, boolean isCounterClockwise, int maxSize, int letterSize) {
         spiral = new Spiral(start, direction, isCounterClockwise, text.length() + 1, maxSize, letterSize);
         spiral.createSpiral();
     }
 
     public void drawText(Graphics g) {
-        int[][] letterPoints = spiral.getLetterPoints();
+        CCoord[] letterPoints = spiral.getLetterPoints();
+        boolean isLeft = true;
         for (int i = 0; i < text.length(); i++) {
-            g.setColor(Color.GREEN);
-            InLine.drawCharacter(g, letterPoints[i], letterPoints[i + 1], true, text.charAt(i));
+//            randomize which side the letter is on
+            isLeft = Math.random() > 0.5;
+            InLine.drawCharacter(g, letterPoints[i], letterPoints[i + 1], isLeft, text.charAt(i));
         }
+    }
+
+    public CCoord[] getLetterPoints() {
+        return spiral.getLetterPoints();
     }
 }

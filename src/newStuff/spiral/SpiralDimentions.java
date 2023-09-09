@@ -75,12 +75,9 @@ public class SpiralDimentions {
 
     private int calculateSpiralLength(double binetNumber, int binetIndex, double spiralScale) {
         int length = 0;
-//        System.out.print(binetIndex + ": ");
         for (int i = 1; i <= binetIndex; i++) {
             length += getArcCircumference(Binet.getBinetValue(i, binetNumber) * spiralScale);
-//            System.out.print(i + ", ");
         }
-//        System.out.println();
         return length;
     }
 

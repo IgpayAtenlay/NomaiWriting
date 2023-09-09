@@ -1,14 +1,15 @@
 package newStuff.characters.baseLetters;
 
-import java.awt.*;
+import newStuff.util.CCoord;
+import newStuff.util.PolarCoord;
 
 public class Diamond extends BaseLetters{
-    public Diamond(Graphics g, int[] start, int[] end, boolean isLeft) {
-        super(g, start, end, isLeft, new int[][] {{45,(int) (50 * Math.sqrt(2))}}, 90);
+    public Diamond(CCoord start, CCoord end, boolean isLeft) {
+        super(start, end, isLeft, PolarCoord.createPolarCoords(45, 50 * Math.sqrt(2)), 90);
     }
 
     @Override
-    public int[] getAddOnCoords() {
-        return getNewCoords(start, midpoints[0][0], midpoints[0][1]);
+    public CCoord getAddOnCoords() {
+        return getNewCoords(location.getStart(), midpoints[0].getDirection(), midpoints[0].getPercentLength());
     }
 }

@@ -1,34 +1,34 @@
 package newStuff.characters.baseLetters;
 
 import newStuff.characters.InLine;
-
-import java.awt.*;
+import newStuff.util.CCoord;
+import newStuff.util.PolarCoord;
 
 public abstract class BaseLetters extends InLine {
-    protected final int[][] midpoints;
+    protected final PolarCoord[] midpoints;
     private final int addOnDirection;
 
-    public BaseLetters(Graphics g, int[] start, int[] end, boolean isLeft, int[][] midpoints, int addOnDirection) {
-        super(g, start, end, isLeft);
+    public BaseLetters(CCoord start, CCoord end, boolean isLeft, PolarCoord[] midpoints, int addOnDirection) {
+        super(start, end, isLeft);
         this.midpoints = midpoints;
         this.addOnDirection = addOnDirection;
     }
 
-    public void drawCharacter() {
-        int[] start = this.start.clone();
+    public void planCharacter() {
+        CCoord start = location.getStart().clone();
         int direction = 0;
-        for (int[] point : midpoints) {
-            direction += point[0];
-            start = drawLine(start, direction, point[1]);
+        for (PolarCoord point : midpoints) {
+            direction += point.getDirection();
+            start = planLine(start, direction, point.getPercentLength());
         }
-        drawLine(start, this.end);
+        planLine(start, location.getEnd());
     }
 
 //    all of these are incorrect - barring diamond
-    public abstract int[] getAddOnCoords();
+    public abstract CCoord getAddOnCoords();
 
     public int getAddOnDirection() {
-        return direction + addOnDirection * (isLeft ? 1 : -1);
+        return (int) location.getDirection() + addOnDirection * (isLeft ? 1 : -1);
     }
 
 }

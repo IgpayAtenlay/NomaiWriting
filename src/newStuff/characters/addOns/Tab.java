@@ -1,15 +1,14 @@
 package newStuff.characters.addOns;
 
-import java.awt.*;
+import newStuff.util.CCoord;
 
 public class Tab extends AddOns{
-    public Tab(Graphics g, int[] start, int direction, int size, boolean isLeft) {
-        super(g, start, direction, size, isLeft);
+    public Tab(CCoord start, int direction, int size, boolean isLeft) {
+        super(start, direction, size, isLeft);
     }
 
     @Override
-    public void drawCharacter() {
-        System.out.println(direction);
-        drawLine(start, 0, 50);
+    public void planCharacter() {
+        planLine(location.getStart(), 0, 40);
     }
 }
