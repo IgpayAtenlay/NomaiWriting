@@ -2,8 +2,8 @@ package newStuff.util;
 
 public class PolarCoord extends Coord{
 //    in degrees
-    private double direction;
-    private double percentLength;
+    private final double direction;
+    private final double percentLength;
 
     public PolarCoord(double direction, double percentLength) {
         this.direction = direction;
@@ -27,14 +27,6 @@ public class PolarCoord extends Coord{
 
     public double getPercentLength() {
         return percentLength;
-    }
-
-    public void setDirection(double direction) {
-        this.direction = direction;
-    }
-
-    public void setPercentLength(double percentLength) {
-        this.percentLength = percentLength;
     }
 
     @Override

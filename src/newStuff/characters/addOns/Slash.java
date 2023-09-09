@@ -11,7 +11,7 @@ public class Slash extends AddOns {
     }
 
     public void planCharacter() {
-        int angle = new Random().nextInt(15, 30) * (new Random().nextInt(0,1) * 2 - 1);
+        int angle = new Random().nextInt(15, 30) * (new Random().nextInt(0,2) * 2 - 1);
         planLine(location.getStart(), angle, 100);
     }
 }

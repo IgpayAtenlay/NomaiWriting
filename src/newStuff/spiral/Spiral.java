@@ -31,7 +31,7 @@ public class Spiral {
         SpiralDimentions spiralDimentions = new SpiralDimentions(numAnchorPoints, maxSize, letterSize);
         spiralDimentions.createDimentions();
 //        visual
-        System.out.println(spiralDimentions);
+//        System.out.println(spiralDimentions);
 
         binetNumber = spiralDimentions.getBinetNumber();
         spiralScale = spiralDimentions.getSpiralScale();
