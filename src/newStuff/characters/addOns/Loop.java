@@ -9,6 +9,6 @@ public class Loop extends AddOns{
     }
 
     public void planCharacter() {
-
+        planCircle(location.getStart(), 0, 40);
     }
 }

@@ -1,10 +1,10 @@
 package newStuff.characters.baseLetters;
 
-import newStuff.characters.InLine;
+import newStuff.characters.Characters;
 import newStuff.util.CCoord;
 import newStuff.util.PolarCoord;
 
-public abstract class BaseLetters extends InLine {
+public abstract class BaseLetters extends Characters {
     protected final PolarCoord[] midpoints;
     private final int addOnDirection;
 

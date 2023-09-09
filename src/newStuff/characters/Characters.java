@@ -1,6 +1,13 @@
 package newStuff.characters;
 
-import newStuff.util.*;
+import newStuff.characters.addOns.Loop;
+import newStuff.characters.addOns.Slash;
+import newStuff.characters.addOns.Tab;
+import newStuff.characters.addOns.Y;
+import newStuff.characters.baseLetters.*;
+import newStuff.characters.punctuation.Space;
+import newStuff.util.CCoord;
+import newStuff.util.Location;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -13,9 +20,14 @@ public abstract class Characters {
     protected List<Location> lines;
     protected List<Location> circles;
 //    constructor
+    public Characters(CCoord start, CCoord end, boolean isLeft) {
+        this(new Location(start, end), isLeft);
+    }
+
     public Characters(CCoord start, int direction, int size, boolean isLeft) {
         this(new Location(start, direction, size), isLeft);
     }
+
     public Characters(Location location, boolean isLeft) {
         this.isLeft = isLeft;
         this.location = location;
@@ -75,5 +87,48 @@ public abstract class Characters {
     }
 //    abstract methods
     protected abstract void planCharacter();
-//
+//    new character
+    public static void drawCharacter(Graphics g, CCoord start, CCoord end, boolean isLeft, char cha) {
+        Characters base = null;
+        Characters addOns = null;
+//        which base is it?
+        if ("glxy".contains(cha + "")) {
+            base = new Diamond(start, end, isLeft);
+        } else if ("depqt".contains(cha + "")) {
+            base = new Hex(start, end, isLeft);
+        } else if ("abcnz".contains(cha + "")) {
+            base = new Hook(start, end, isLeft);
+        } else if ("iksw".contains(cha + "")) {
+            base = new M(start, end, isLeft);
+        } else if ("fjru".contains(cha + "")) {
+            base = new Nib(start, end, isLeft);
+        } else if ("hmov".contains(cha + "")) {
+            base = new ZigZag(start, end, isLeft);
+        } else if (" ".contains(cha + "")) {
+            base = new Space(start, end, isLeft);
+        }
+        if (base != null) {
+            base.drawCharacter(g);
+    //            is it a letter?
+            if (base instanceof BaseLetters letter) {
+    //                addon information
+                int direction = letter.getAddOnDirection();
+                int size = (int) letter.location.getLength();
+                CCoord addOnStart = letter.getAddOnCoords();
+    //                which addOn is it?
+                if ("aeiouy".contains(cha + "")) {
+                    addOns = new Slash(addOnStart, direction, size, isLeft);
+                } else if ("bjkpvx".contains(cha + "")) {
+                    addOns = new Tab(addOnStart, direction, size, isLeft);
+                } else if ("cdfgmw".contains(cha + "")) {
+                    addOns = new Y(addOnStart, direction, size, isLeft);
+                } else if ("lqz".contains(cha + "")) {
+                    addOns = new Loop(addOnStart, direction, size, isLeft);
+                }
+                if (addOns != null) {
+                    addOns.drawCharacter(g);
+                }
+            }
+        }
+    }
 }

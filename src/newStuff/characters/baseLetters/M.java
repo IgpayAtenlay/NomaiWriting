@@ -18,8 +18,4 @@ public class M extends BaseLetters{
         return new CCoord(temp.getX(), temp.getY());
     }
 
-    //    @Override
-//    public void drawCharacter() {
-//
-//    }
 }

@@ -40,14 +40,15 @@ public class Display extends JPanel {
 //        g.drawLine((int) start.getX(), (int) start.getY(), (int) start.getX(), (int) start.getY() - maxSize);
 //        g.drawLine((int) start.getX(), (int) start.getY(), (int) start.getX() + letterSize, (int) start.getY());
 
-        String str = "The big red fox jumped over lazy dogs";
+        String str = "The quick brown fox jumped over lazy dogs";
 
         Paragraph paragraph = new Paragraph(str);
         paragraph.createSpiral(start, direction, isCounterClockwise, maxSize, letterSize);
         paragraph.drawText(g);
 //        DrawPoints.drawPoints(g, paragraph.getLetterPoints(), Color.GREEN);
-//        Hex.drawCharacter(g, new Coord(100, 200), new Coord(200, 200),true, 'i');
-//        int y = 200 - 40 * 2;
-//        g.drawLine(0, y,40 * 2, y);
+//        Characters.drawCharacter(g, new CCoord(100, 200), new CCoord(200, 200),true, 'z');
+//        g.setColor(Color.RED);
+//        int y = 200;
+//        g.drawLine(0, y,40 * 100, y);
     }
 }

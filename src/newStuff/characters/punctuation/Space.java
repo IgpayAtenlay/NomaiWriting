@@ -1,9 +1,9 @@
 package newStuff.characters.punctuation;
 
-import newStuff.characters.InLine;
+import newStuff.characters.Characters;
 import newStuff.util.CCoord;
 
-public class Space extends InLine {
+public class Space extends Characters {
     public Space(CCoord start, CCoord end, boolean isLeft) {
         super(start, end, isLeft);
     }

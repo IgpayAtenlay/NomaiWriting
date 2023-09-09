@@ -1,6 +1,6 @@
 package newStuff.translation;
 
-import newStuff.characters.InLine;
+import newStuff.characters.Characters;
 import newStuff.spiral.Spiral;
 import newStuff.util.CCoord;
 
@@ -34,7 +34,7 @@ public class Paragraph {
         for (int i = 0; i < text.length(); i++) {
 //            randomize which side the letter is on
             isLeft = Math.random() > 0.5;
-            InLine.drawCharacter(g, letterPoints[i], letterPoints[i + 1], isLeft, text.charAt(i));
+            Characters.drawCharacter(g, letterPoints[i], letterPoints[i + 1], isLeft, text.charAt(i));
         }
     }
 
