@@ -27,8 +27,8 @@ public class Paragraph {
         this.future = future;
     }
 
-    public void createSpiral(CCoord start, int direction, boolean isCounterClockwise, int maxSize, int letterSize) {
-        spiral = new Spiral(start, direction, isCounterClockwise, text.length() + 1, maxSize, letterSize);
+    public void createSpiral(CCoord start, double direction, boolean isCounterClockwise, double maxSize, double maxWidth) {
+        spiral = new Spiral(start, direction, isCounterClockwise, text.length() + 1, maxSize, maxWidth);
         spiral.createSpiral();
     }
 

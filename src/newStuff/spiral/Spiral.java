@@ -5,9 +5,10 @@ import newStuff.util.CCoord;
 public class Spiral {
 //    visual
     private CCoord start;
-    private int direction;
+    private double direction;
     private boolean isCounterclockwise;
-    private int maxSize;
+    private double maxSize;
+    private double maxWidth;
     private int letterSize;
 //    calculated
     private int numAnchorPoints;
@@ -18,17 +19,22 @@ public class Spiral {
     private CCoord[] anchorPoints;
     private CCoord[] letterPoints;
 
-    public Spiral(CCoord start, int direction, boolean isCounterclockwise, int numAnchorPoints, int maxSize, int letterSize) {
+    public Spiral(CCoord start, double direction, boolean isCounterclockwise, int numAnchorPoints, double maxSize, double maxWidth, int letterSize) {
         this.start = start;
         this.direction = direction;
         this.isCounterclockwise = isCounterclockwise;
         this.numAnchorPoints = numAnchorPoints;
-        if (numAnchorPoints * letterSize * 2 / 5 < maxSize) {
-            this.maxSize = numAnchorPoints * letterSize * 2 / 5;
+        if ((double) (numAnchorPoints * letterSize * 2) / 5 < maxSize) {
+            this.maxSize = (double) (numAnchorPoints * letterSize * 2) / 5;
         } else {
             this.maxSize = maxSize;
         }
         this.letterSize = letterSize;
+        this.maxWidth = maxWidth;
+    }
+
+    public Spiral(CCoord start, double direction, boolean isCounterclockwise, int numAnchorPoints, double maxSize, double maxWidth) {
+        this(start, direction, isCounterclockwise, numAnchorPoints, maxSize, maxWidth, (int) (maxSize / numAnchorPoints / 2 * 5));
     }
 
     public void createSpiral() {

@@ -1,11 +1,17 @@
 package newStuff.translation;
 
+import newStuff.util.CCoord;
+import newStuff.util.Location;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scroll {
     private List<Paragraph> allParagraphs;
     private Paragraph focusParagraph;
+    private final Color defaultColor = new Color(140, 130, 255);
+    private final BasicStroke defaultSize = new BasicStroke(2);
 
 //    always allParagraphs[0] is start
 //    the rest are in an order based on the inside information
@@ -73,5 +79,21 @@ public class Scroll {
 
     public void backspace() {
         focusParagraph.backspace();
+    }
+
+    public void drawScroll(Graphics g, int width, int height) {
+//        set graphics
+        Graphics2D g2D = (Graphics2D) g;
+        g.setColor(defaultColor);
+        g2D.setStroke(defaultSize);
+        boolean isCounterClockwise = true;
+        int buffer = (height > width ? height / 10 : width / 10);
+
+        Location scroll = new Location(new CCoord((double) width / 2 - buffer, height - buffer), 0, height - buffer * 2);
+
+        if (allParagraphs.size() == 1) {
+            focusParagraph.createSpiral(scroll.getStart(), scroll.getDirection(), isCounterClockwise, scroll.getLength(), (double) width / 2);
+            focusParagraph.drawText(g);
+        }
     }
 }

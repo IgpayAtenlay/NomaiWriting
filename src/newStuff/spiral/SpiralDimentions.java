@@ -6,16 +6,22 @@ public class SpiralDimentions {
     private static final int minNumArcs = 5;
     private static final int maxNumArcs = 20;
     private final int numAnchorPoints;
-    private final int maxSize;
+    private final double maxSize;
     private final int letterSize;
     private double binetNumber;
     private int spiralScale;
     private int binetIndex;
+    private double maxWidth;
 //    constructor
-    public SpiralDimentions(int numAnchorPoints, int maxSize, int letterSize) {
+    public SpiralDimentions(int numAnchorPoints, double maxSize, int letterSize) {
+        this(numAnchorPoints, maxSize, letterSize, Double.MAX_VALUE);
+    }
+
+    public SpiralDimentions(int numAnchorPoints, double maxSize, int letterSize, double maxWidth) {
         this.numAnchorPoints = numAnchorPoints;
         this.maxSize = maxSize;
         this.letterSize = letterSize;
+        this.maxWidth = maxWidth;
     }
 //    main code
     public void createDimentions() {
@@ -30,7 +36,7 @@ public class SpiralDimentions {
             if (binetIndex > 0) {
                 int numAnchorPoints = calculateNumberAnchorPoints(binetNumber, binetIndex);
 //                if this gives less but enough anchor points
-                if (numAnchorPoints < minNumAnchorPoints && numAnchorPoints > this.numAnchorPoints) {
+                if (numAnchorPoints < minNumAnchorPoints && numAnchorPoints > this.numAnchorPoints && calculateSpiralWidth(binetNumber, binetIndex, getSpiralScale(binetNumber, binetIndex)) < maxWidth) {
                     minNumAnchorPoints = numAnchorPoints;
                     bestBinetIndex = binetIndex;
                     bestBinetNumber = binetNumber;
@@ -53,7 +59,7 @@ public class SpiralDimentions {
         for(int binetIndex = minNumArcs; binetIndex <= maxNumArcs; binetIndex++) {
             int numAnchorPoints = calculateNumberAnchorPoints(binetNumber, binetIndex);
 //            if this gives less but enough anchor points
-            if (numAnchorPoints < minNumAnchorPoints && numAnchorPoints > this.numAnchorPoints) {
+            if (numAnchorPoints < minNumAnchorPoints && numAnchorPoints > this.numAnchorPoints && calculateSpiralWidth(binetNumber, binetIndex, getSpiralScale(binetNumber, binetIndex)) < maxWidth) {
                 minNumAnchorPoints = numAnchorPoints;
                 bestBinetIndex = binetIndex;
             }
@@ -89,6 +95,13 @@ public class SpiralDimentions {
 
     private static double getArcCircumference(double radius) {
         return Math.PI * radius / 2;
+    }
+
+    private double calculateSpiralWidth(double binetNumber, int binetIndex, double spiralScale) {
+        double radiusLargerCircle = Binet.getBinetValue(binetIndex, binetNumber) * spiralScale;
+        double radiusMediumCircle = Binet.getBinetValue(binetIndex - 1, binetNumber) * spiralScale;
+        double radiusSmallerCircle = Binet.getBinetValue(binetIndex - 2, binetNumber) * spiralScale;
+        return radiusLargerCircle;
     }
 //    getters and setters
     public double getBinetNumber() {

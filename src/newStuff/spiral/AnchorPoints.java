@@ -10,14 +10,14 @@ public class AnchorPoints {
 //    change this
     private final int letterSize;
     private final CCoord start;
-    private final int startingDirection;
+    private final double startingDirection;
     private final boolean isCounterClockwise;
     private double binetNumber;
     private int spiralScale;
     private int binetIndex;
     private CCoord[] anchorPoints;
 
-    public AnchorPoints(int numAnchorPoints, int letterSize, CCoord start, int startingDirection, boolean isCounterClockwise, double binetNumber, int spiralScale, int binetIndex) {
+    public AnchorPoints(int numAnchorPoints, int letterSize, CCoord start, double startingDirection, boolean isCounterClockwise, double binetNumber, int spiralScale, int binetIndex) {
         this.numAnchorPoints = numAnchorPoints;
         this.letterSize = letterSize;
         this.start = start;

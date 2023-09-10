@@ -1,7 +1,6 @@
 package newStuff.display;
 
 import newStuff.translation.Scroll;
-import newStuff.util.CCoord;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +9,9 @@ import java.awt.event.KeyListener;
 
 public class Display extends JPanel implements KeyListener {
 
-    Scroll scroll;
+    private Scroll scroll;
+    private static final int width = 600;
+    private static final int height = 800;
 
     public Display() {
         addKeyListener(this);
@@ -21,7 +22,7 @@ public class Display extends JPanel implements KeyListener {
         JFrame frame = new JFrame("Nomai");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        frame.setSize(600, 800);
+        frame.setSize(width, height);
 
         Display display = new Display();
         frame.add(display);
@@ -31,25 +32,11 @@ public class Display extends JPanel implements KeyListener {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-//        set spiral dimentions and stuff
-        CCoord start = new CCoord(100, 700);
-        int direction = 0;
-        boolean isCounterClockwise = true;
-        int numAnchorPoints = 50;
-        int letterSize = 30;
-        int maxSize = numAnchorPoints * letterSize * 2 / 5;
-
 //        make background
         g.setColor(new Color(110, 90, 40));
-        g.fillRect(0, 0, 600, 800);
-//        set looks
-        Graphics2D g2D = (Graphics2D) g;
-        g2D.setStroke(new BasicStroke(2));
-        g.setColor(new Color(140, 130, 255));
-//        create origional spiral
-        scroll.getFocusParagraph().createSpiral(start, direction, isCounterClockwise, maxSize, letterSize);
-        scroll.getFocusParagraph().drawText(g);
-
+        g.fillRect(0, 0, width, height);
+//        draw all spirals
+        scroll.drawScroll(g, width, height);
     }
 
     @Override
