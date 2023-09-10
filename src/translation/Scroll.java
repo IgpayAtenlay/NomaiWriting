@@ -89,10 +89,10 @@ public class Scroll {
         boolean isCounterClockwise = true;
         int buffer = (height > width ? height / 10 : width / 10);
 
-        Location scroll = new Location(new CCoord((double) width / 2 - buffer, height - buffer), 0, height - buffer * 2);
+        Location scroll = new Location(new CCoord((double) width / 2, height - buffer), 0, height - buffer * 2);
 
         if (allParagraphs.size() == 1) {
-            focusParagraph.createSpiral(scroll.getStart(), scroll.getDirection(), isCounterClockwise, scroll.getLength(), (double) width / 2);
+            focusParagraph.createSpiral(scroll.getStart(), scroll.getDirection(), isCounterClockwise, scroll.getLength(), (double) width / 2 - buffer);
             focusParagraph.drawText(g);
         }
     }

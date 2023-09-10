@@ -10,14 +10,12 @@ public class Spiral {
     private CCoord[] anchorPoints;
     private CCoord[] letterPoints;
 
-    public Spiral(CCoord start, double direction, boolean isCounterclockwise, int numAnchorPoints, double maxSize, double maxWidth) {
-        spiralDimentions = SpiralDimentions.getDimentions(start, direction, isCounterclockwise, numAnchorPoints, maxSize, maxWidth);
+    public Spiral(CCoord start, double direction, boolean isCounterclockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
+        spiralDimentions = SpiralDimentions.getDimentions(start, direction, isCounterclockwise, numAnchorPoints, maxDiameter, maxRadius);
         this.numAnchorPoints = numAnchorPoints;
     }
 
     public void createSpiral() {
-//        visual
-//        System.out.println(spiralDimentions);
         AnchorPoints anchorPoints = new AnchorPoints(numAnchorPoints, spiralDimentions);
         this.anchorPoints = anchorPoints.getAllPoints();
         this.letterPoints = LetterPoints.getLetterPoints(this.anchorPoints);
