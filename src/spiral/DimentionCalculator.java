@@ -3,7 +3,7 @@ package spiral;
 import util.Binet;
 import util.CCoord;
 
-public class SpiralDimentions {
+public class DimentionCalculator {
     private static final double minBinetNum = 1.2;
     private static final int maxNumArcs = 10;
     private static final double anchorSizeMax = 20;
@@ -17,14 +17,14 @@ public class SpiralDimentions {
     private int binetIndex;
     private double diameter;
 //    constructor
-    public SpiralDimentions(int numAnchorPoints, double maxDiameter, double maxRadius) {
+    public DimentionCalculator(int numAnchorPoints, double maxDiameter, double maxRadius) {
         this.numAnchorPoints = numAnchorPoints;
         this.maxDiameter = maxDiameter;
         this.maxRadius = maxRadius;
     }
 //    main code
     public static util.SpiralDimentions getDimentions(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
-        SpiralDimentions spiral = new SpiralDimentions(numAnchorPoints, maxDiameter, maxRadius);
+        DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints, maxDiameter, maxRadius);
         spiral.createDimentions();
         return new util.SpiralDimentions(start, direction, spiral.diameter, isCounterClockwise, spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
     }

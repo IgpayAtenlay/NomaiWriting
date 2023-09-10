@@ -27,14 +27,22 @@ public class Paragraph {
         this.future = future;
     }
 
-    public void createSpiral(CCoord start, double direction, boolean isCounterClockwise, double maxSize, double maxWidth) {
-        spiral = new Spiral(start, direction, isCounterClockwise, text.length() + 1, maxSize, maxWidth);
+    public void createSpiral(Location location, double maxWidth, boolean isCounterClockwise) {
+        spiral = new Spiral(location.getStart(), location.getDirection(), isCounterClockwise, text.length() + 1, location.getLength(), maxWidth);
         spiral.createSpiral();
+    }
+
+    public void createSpiral(Location location, boolean isCounterClockwise) {
+        createSpiral(location, location.getLength(), isCounterClockwise);
+    }
+
+    public void createSpiral(Location location) {
+        createSpiral(location, true);
     }
 
     public void drawText(Graphics g) {
         CCoord[] letterPoints = spiral.getLetterPoints();
-        boolean isLeft = true;
+        boolean isLeft;
         if (cursorLocation == 0 && text != "") {
             Color color = g.getColor();
             g.setColor(Color.RED);
@@ -59,7 +67,7 @@ public class Paragraph {
             }
         }
     }
-
+//    getters
     public CCoord[] getLetterPoints() {
         return spiral.getLetterPoints();
     }
@@ -76,6 +84,13 @@ public class Paragraph {
         return getFuture(0);
     }
 
+    public util.SpiralDimentions getSpiralDimentions() {
+        if (spiral != null) {
+            return spiral.getSpiralDimentions();
+        }
+        return null;
+    }
+//    cursor location
     public void focusStart() {
         cursorLocation = 0;
     }
@@ -99,7 +114,7 @@ public class Paragraph {
         }
         return false;
     }
-
+//    modify string
     public void add(char cha) {
         String newText = text.substring(0, cursorLocation);
         newText += cha;
