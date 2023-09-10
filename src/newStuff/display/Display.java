@@ -14,7 +14,7 @@ public class Display extends JPanel implements KeyListener {
 
     public Display() {
         addKeyListener(this);
-        scroll = new Scroll("The quick brown fox jumped over lazy dogs");
+        scroll = new Scroll();
     }
 
     public static void paintPicture() {
@@ -26,7 +26,6 @@ public class Display extends JPanel implements KeyListener {
         Display display = new Display();
         frame.add(display);
         display.requestFocusInWindow();
-
 
     }
 
@@ -48,14 +47,8 @@ public class Display extends JPanel implements KeyListener {
         g2D.setStroke(new BasicStroke(2));
         g.setColor(new Color(140, 130, 255));
 //        create origional spiral
-
-        scroll.focusStart();
-        boolean notDone = true;
-        while(notDone) {
-            scroll.getFocusParagraph().createSpiral(start, direction, isCounterClockwise, maxSize, letterSize);
-            scroll.getFocusParagraph().drawText(g);
-            notDone = scroll.stepForward(0);
-        }
+        scroll.getFocusParagraph().createSpiral(start, direction, isCounterClockwise, maxSize, letterSize);
+        scroll.getFocusParagraph().drawText(g);
 
     }
 
@@ -66,7 +59,27 @@ public class Display extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyChar() == 'h') {
+        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            scroll.backspace();
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            scroll.paragraphForward();
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            scroll.paragraphBack();
+            repaint();
+        }if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            scroll.stepForward();
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            scroll.stepBack();
+            repaint();
+        } else if ("abcdefghijklmnopqrstuvwxyz ".contains(e.getKeyChar() + "")) {
+            scroll.add(e.getKeyChar());
+            repaint();
+        } else if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(e.getKeyChar() + "")) {
+            scroll.add('^');
+            scroll.add(Character.toLowerCase(e.getKeyChar()));
             repaint();
         }
     }

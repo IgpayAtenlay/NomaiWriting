@@ -23,7 +23,11 @@ public class Spiral {
         this.direction = direction;
         this.isCounterclockwise = isCounterclockwise;
         this.numAnchorPoints = numAnchorPoints;
-        this.maxSize = maxSize;
+        if (numAnchorPoints * letterSize * 2 / 5 < maxSize) {
+            this.maxSize = numAnchorPoints * letterSize * 2 / 5;
+        } else {
+            this.maxSize = maxSize;
+        }
         this.letterSize = letterSize;
     }
 

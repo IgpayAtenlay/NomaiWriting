@@ -6,6 +6,7 @@ import newStuff.characters.addOns.Tab;
 import newStuff.characters.addOns.Y;
 import newStuff.characters.baseLetters.*;
 import newStuff.characters.punctuation.Space;
+import newStuff.characters.punctuation.UpperCase;
 import newStuff.util.CCoord;
 import newStuff.util.Location;
 
@@ -67,8 +68,8 @@ public abstract class Characters {
     private CCoord getRealCoords(CCoord relativeCoords) {
         CCoord realCoords = new CCoord();
         double distance = Math.sqrt(Math.pow(relativeCoords.getX(), 2) + Math.pow(relativeCoords.getY(), 2));
-        realCoords.setX(location.getStart().getX() + Math.cos(Math.atan((double) relativeCoords.getY() / relativeCoords.getX()) + directionInRad(location.getDirection())) * distance);
-        realCoords.setY(location.getStart().getY() + Math.sin(Math.atan((double) relativeCoords.getY() / relativeCoords.getX()) + directionInRad(location.getDirection())) * distance);
+        realCoords.setX(location.getStartX() + Math.cos(Math.atan((double) relativeCoords.getY() / relativeCoords.getX()) + directionInRad(location.getDirection())) * distance);
+        realCoords.setY(location.getStartY() + Math.sin(Math.atan((double) relativeCoords.getY() / relativeCoords.getX()) + directionInRad(location.getDirection())) * distance);
         return realCoords;
     }
 
@@ -77,7 +78,7 @@ public abstract class Characters {
     }
     protected void drawCharacter(Graphics g) {
         planCharacter();
-        lines.forEach(location -> g.drawLine((int) location.getStart().getX(), (int) location.getStart().getY(), (int) location.getEnd().getX(), (int) location.getEnd().getY()));
+        lines.forEach(location -> location.drawLine(g));
         for (Location location: circles) {
             CCoord middle = location.getMidpoint();
             double radius = middle.distance(location.getStart());
@@ -106,6 +107,8 @@ public abstract class Characters {
             base = new ZigZag(start, end, isLeft);
         } else if (" ".contains(cha + "")) {
             base = new Space(start, end, isLeft);
+        } else if ("^".contains(cha + "")) {
+            base = new UpperCase(start, end, isLeft);
         }
         if (base != null) {
             base.drawCharacter(g);
