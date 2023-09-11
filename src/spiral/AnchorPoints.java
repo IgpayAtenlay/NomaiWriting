@@ -8,52 +8,36 @@ import java.awt.*;
 
 public class AnchorPoints {
     private final int numAnchorPoints;
+    private SpiralDimentions spiralDimentions;
 //    change this
-    private final int letterSize;
-    private final CCoord start;
-    private final double startingDirection;
-    private final boolean isCounterClockwise;
-    private double binetNumber;
-    private int spiralScale;
-    private int binetIndex;
     private CCoord[] anchorPoints;
 
-    public AnchorPoints(int numAnchorPoints, int letterSize, CCoord start, double startingDirection, boolean isCounterClockwise, double binetNumber, int spiralScale, int binetIndex) {
-        this.numAnchorPoints = numAnchorPoints;
-        this.letterSize = letterSize;
-        this.start = start;
-        this.startingDirection = startingDirection;
-        this.isCounterClockwise = isCounterClockwise;
-        this.binetNumber = binetNumber;
-        this.spiralScale = spiralScale;
-        this.binetIndex = binetIndex;
-        this.anchorPoints = new CCoord[this.numAnchorPoints];
-    }
-
     public AnchorPoints(int numAnchorPoints, SpiralDimentions spiralDimentions) {
-        this(numAnchorPoints, (int) spiralDimentions.getAnchorSize(), spiralDimentions.getStart(), spiralDimentions.getDirection(), spiralDimentions.isCounterClockwise(), spiralDimentions.getBinetNumber(), (int) spiralDimentions.getSpiralScale(), spiralDimentions.getBinetIndex());
+        this.numAnchorPoints = numAnchorPoints;
+        this.anchorPoints = new CCoord[numAnchorPoints];
+        this.spiralDimentions = spiralDimentions;
     }
 
     public CCoord[] getAllPoints() {
-        double direction = startingDirection - 90 + 360;
+        double direction = spiralDimentions.getDirection() - 90 - 90 + 360;
         direction = direction % 360;
-        int binetIndex = this.binetIndex;
+        int binetIndex = spiralDimentions.getBinetIndex();
 //        get first arc center
         CCoord arcCenter = new CCoord();
-        arcCenter.setX(start.getX() - Math.cos(Math.toRadians(direction)) * getRadius(binetIndex));
-        arcCenter.setY(start.getY() + Math.sin(Math.toRadians(direction)) * getRadius(binetIndex));
+        arcCenter.setX(spiralDimentions.getStartX() - Math.cos(Math.toRadians(direction)) * getRadius(binetIndex));
+        arcCenter.setY(spiralDimentions.getStartY() + Math.sin(Math.toRadians(direction)) * getRadius(binetIndex));
 //        make all anchor points
         for (int i = 0; i < numAnchorPoints; i++) {
             anchorPoints[i] = getPointHere((int) direction, binetIndex, arcCenter);
-            if (distanceLeft(direction, binetIndex) > this.letterSize) {
-                direction += getDirectionChange(this.letterSize, binetIndex);
+            if (distanceLeft(direction, binetIndex) > spiralDimentions.getAnchorSize()) {
+                direction += getDirectionChange(spiralDimentions.getAnchorSize(), binetIndex);
             } else {
                 double distanceOnOldArc = distanceLeft(direction, binetIndex);
                 double degreesLeft = getDirectionChange(distanceOnOldArc, binetIndex);
-                direction += 90 - ((direction - startingDirection) % 90);
+                direction += 90 - ((direction - spiralDimentions.getDirection() - 90) % 90);
                 binetIndex--;
                 arcCenter = newArcCenter(binetIndex, arcCenter, (int) direction);
-                direction += getDirectionChange(this.letterSize - distanceOnOldArc, binetIndex);
+                direction += getDirectionChange(spiralDimentions.getAnchorSize() - distanceOnOldArc, binetIndex);
             }
         }
         return anchorPoints;
@@ -74,7 +58,7 @@ public class AnchorPoints {
     }
 
     private int getRadius(int binetIndex) {
-        return (int) (Binet.getBinetValue(binetIndex, binetNumber) * spiralScale);
+        return (int) (Binet.getBinetValue(binetIndex, spiralDimentions.getBinetNumber()) * spiralDimentions.getSpiralScale());
     }
 
     private double getDirectionChange(double distance, int binetIndex) {
@@ -84,7 +68,7 @@ public class AnchorPoints {
 
     private double distanceLeft(double direction, int binetIndex) {
         int radius = getRadius(binetIndex);
-        double degreeLeft = direction - startingDirection;
+        double degreeLeft = direction - spiralDimentions.getDirection() - 90;
         degreeLeft = 90 - degreeLeft % 90;
         return 2 * Math.PI * radius * degreeLeft / 360;
     }

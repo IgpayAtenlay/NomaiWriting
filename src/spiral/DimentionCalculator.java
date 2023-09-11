@@ -2,8 +2,9 @@ package spiral;
 
 import util.Binet;
 import util.CCoord;
+import util.SpiralDimentions;
 
-public class SpiralDimentions {
+public class DimentionCalculator {
     private static final double minBinetNum = 1.2;
     private static final int maxNumArcs = 10;
     private static final double anchorSizeMax = 20;
@@ -17,16 +18,16 @@ public class SpiralDimentions {
     private int binetIndex;
     private double diameter;
 //    constructor
-    public SpiralDimentions(int numAnchorPoints, double maxDiameter, double maxRadius) {
+    public DimentionCalculator(int numAnchorPoints, double maxDiameter, double maxRadius) {
         this.numAnchorPoints = numAnchorPoints;
         this.maxDiameter = maxDiameter;
         this.maxRadius = maxRadius;
     }
 //    main code
-    public static util.SpiralDimentions getDimentions(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
-        SpiralDimentions spiral = new SpiralDimentions(numAnchorPoints, maxDiameter, maxRadius);
+    public static SpiralDimentions getDimentions(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
+        DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints, maxDiameter, maxRadius);
         spiral.createDimentions();
-        return new util.SpiralDimentions(start, direction, spiral.diameter, isCounterClockwise, spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
+        return new SpiralDimentions(start, direction, spiral.diameter, isCounterClockwise, spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
     }
     public void createDimentions() {
         double bestBinetNumber = 0;
@@ -39,7 +40,7 @@ public class SpiralDimentions {
 //            test binet index
             for (int binetIndex = (binetNumber > 1.3 ? 5 : (binetNumber > 1.2 ? 6 : (binetNumber > 1.15 ? 7 : 8))); binetIndex < maxNumArcs; binetIndex++) {
 //                test spiral scale
-                for (double spiralScale = 0; spiralScale < calculateMaxSpiralSize(binetNumber, binetIndex, maxDiameter) ; spiralScale++) {
+                for (double spiralScale = 0; spiralScale < calculateMaxSpiralSize(binetNumber, binetIndex, maxDiameter); spiralScale++) {
                     double diameter = calculateSpiralDiameter(binetNumber, binetIndex, spiralScale); /*calculate*/
                     double radius = calculateSpiralRadius(binetNumber, binetIndex, spiralScale); /*calculate*/
                     double anchorSize = calculateAnchorSize(binetNumber, binetIndex, spiralScale); /*calculate*/

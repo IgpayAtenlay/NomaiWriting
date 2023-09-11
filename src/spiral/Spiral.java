@@ -1,6 +1,7 @@
 package spiral;
 
 import util.CCoord;
+import util.SpiralDimentions;
 
 public class Spiral {
 //    visual
@@ -11,7 +12,7 @@ public class Spiral {
     private CCoord[] letterPoints;
 
     public Spiral(CCoord start, double direction, boolean isCounterclockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
-        spiralDimentions = SpiralDimentions.getDimentions(start, direction, isCounterclockwise, numAnchorPoints, maxDiameter, maxRadius);
+        spiralDimentions = DimentionCalculator.getDimentions(start, direction, isCounterclockwise, numAnchorPoints, maxDiameter, maxRadius);
         this.numAnchorPoints = numAnchorPoints;
     }
 
@@ -23,5 +24,9 @@ public class Spiral {
 
     public CCoord[] getLetterPoints() {
         return letterPoints;
+    }
+
+    public SpiralDimentions getSpiralDimentions() {
+        return spiralDimentions;
     }
 }

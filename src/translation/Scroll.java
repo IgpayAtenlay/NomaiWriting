@@ -2,6 +2,7 @@ package translation;
 
 import util.CCoord;
 import util.Location;
+import util.SpiralDimentions;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Scroll {
 
     public Scroll(String text) {
         allParagraphs = new ArrayList<>();
+        allParagraphs.add(new Paragraph(text));
         allParagraphs.add(new Paragraph(text));
         focusParagraph = allParagraphs.get(0);
     }
@@ -89,11 +91,24 @@ public class Scroll {
         boolean isCounterClockwise = true;
         int buffer = (height > width ? height / 10 : width / 10);
 
-        Location scroll = new Location(new CCoord((double) width / 2, height - buffer), 0, height - buffer * 2);
+        Location scroll = new Location(new CCoord((double) width / 2, height - buffer), 90, height - buffer * 2);
 
         if (allParagraphs.size() == 1) {
-            focusParagraph.createSpiral(scroll.getStart(), scroll.getDirection(), isCounterClockwise, scroll.getLength(), (double) width / 2 - buffer);
+            focusParagraph.createSpiral(scroll, (double) width / 2 - buffer, isCounterClockwise);
             focusParagraph.drawText(g);
+        } else if (allParagraphs.size() == 2) {
+            allParagraphs.get(0).createSpiral(scroll, (double) width / 2 - buffer, isCounterClockwise);
+            allParagraphs.get(0).drawText(g);
+
+            SpiralDimentions previous = allParagraphs.get(0).getSpiralDimentions();
+            double direction = 45;
+            CCoord newSpiralStart = previous.getExteriorPoint(direction);
+            Location newSpiral = new Location(newSpiralStart, direction + 90, previous.getLength());
+
+            allParagraphs.get(1).createSpiral(newSpiral, (double) width / 2 - buffer, isCounterClockwise);
+            allParagraphs.get(1).drawText(g);
+
         }
     }
+
 }
