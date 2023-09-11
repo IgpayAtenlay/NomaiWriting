@@ -1,5 +1,9 @@
 package util;
 
+import display.DrawPoints;
+
+import java.awt.*;
+
 public class SpiralDimentions extends Location {
     private final boolean isCounterClockwise;
     private final double anchorSize;
@@ -45,24 +49,30 @@ public class SpiralDimentions extends Location {
         return spiralScale;
     }
 
-    public CCoord getExteriorPoint(double direction) {
-        double directionChange = direction - getDirection() + 180;
-        directionChange = directionChange % 360;
+    public CCoord getExteriorPoint(double direction, Graphics g) {
+        double directionChange;
+        if (isCounterClockwise) {
+            directionChange = 180 + Simplify.degree360(direction - getDirection());
+        } else {
+            directionChange = 180 - Simplify.degree360(direction - getDirection());
+        }
+        directionChange = Simplify.degree360(directionChange);
         int binetIndex = this.binetIndex;
-        double circleDirection = getDirection() - 90;
+        double circleDirection = getDirection() - 180;
 
         CCoord arcCenter = new CCoord();
-        arcCenter.setX(getStartX() - Math.cos(Math.toRadians(getDirection() - 180)) * getRadius(binetIndex));
-        arcCenter.setY(getStartY() + Math.sin(Math.toRadians(getDirection() - 180)) * getRadius(binetIndex));
+        arcCenter.setX(getStartX() - Math.cos(Math.toRadians(circleDirection)) * getRadius(binetIndex));
+        arcCenter.setY(getStartY() + Math.sin(Math.toRadians(circleDirection)) * getRadius(binetIndex));
 
         for (int i = 0; i < (int) (directionChange / 90); i++) {
+            circleDirection += 90 * (isCounterClockwise ? 1 : -1);
             double changeRadius = getRadius(binetIndex) - getRadius(binetIndex - 1);
             double changeX = Math.cos(Math.toRadians(circleDirection)) * changeRadius;
             double changeY = Math.sin(Math.toRadians(circleDirection)) * changeRadius * -1;
             arcCenter = new CCoord(arcCenter.getX() + changeX, arcCenter.getY() + changeY);
             binetIndex--;
-            circleDirection += 90;
-            System.out.println(arcCenter);
+
+            DrawPoints.drawPoint(g, arcCenter, Color.RED);
         }
 
         double radius = getRadius(binetIndex);

@@ -3,6 +3,7 @@ package spiral;
 import display.DrawPoints;
 import util.Binet;
 import util.CCoord;
+import util.Simplify;
 import util.SpiralDimentions;
 
 import java.awt.*;
@@ -10,25 +11,27 @@ import java.awt.*;
 public class AnchorPoints {
     private final int numAnchorPoints;
     private SpiralDimentions spiralDimentions;
-//    change this
+//    delete once done
+    private final boolean isCounterClockwise;
     private CCoord[] anchorPoints;
 
     public AnchorPoints(int numAnchorPoints, SpiralDimentions spiralDimentions) {
         this.numAnchorPoints = numAnchorPoints;
         this.anchorPoints = new CCoord[numAnchorPoints];
         this.spiralDimentions = spiralDimentions;
+        this.isCounterClockwise = spiralDimentions.isCounterClockwise();
     }
 
     public CCoord[] getAllPoints(Graphics g) {
         DrawPoints.drawPoint(g, spiralDimentions.getStart(), Color.RED);
         double direction = spiralDimentions.getDirection() + 180;
-        direction = direction % 360;
+        direction = Simplify.degree360(direction);
         int binetIndex = spiralDimentions.getBinetIndex();
 //        get first arc center
         CCoord arcCenter = new CCoord();
         arcCenter.setX(spiralDimentions.getStartX() - Math.cos(Math.toRadians(direction)) * getRadius(binetIndex));
         arcCenter.setY(spiralDimentions.getStartY() + Math.sin(Math.toRadians(direction)) * getRadius(binetIndex));
-        DrawPoints.drawPoint(g, arcCenter, Color.RED);
+//        DrawPoints.drawPoint(g, arcCenter, Color.RED);
 //        make all anchor points
         for (int i = 0; i < numAnchorPoints; i++) {
             anchorPoints[i] = getPointHere(direction, binetIndex, arcCenter);
@@ -36,16 +39,18 @@ public class AnchorPoints {
                 direction += getDirectionChange(spiralDimentions.getAnchorSize(), binetIndex);
             } else {
                 double distanceOnOldArc = distanceLeft(direction, binetIndex);
-                double degreesLeft = getDirectionChange(distanceOnOldArc, binetIndex);
-                direction = Math.ceil((direction - spiralDimentions.getDirection()) / 90) * 90 + spiralDimentions.getDirection();
-//                direction += 90 - ((direction - spiralDimentions.getDirection() - 90) % 90);
+                if (isCounterClockwise) {
+                    direction = Math.ceil((direction - spiralDimentions.getDirection()) / 90) * 90 + spiralDimentions.getDirection();
+                } else {
+                    direction = Math.floor((direction - spiralDimentions.getDirection()) / 90) * 90 + spiralDimentions.getDirection();
+                }
                 binetIndex--;
                 arcCenter = newArcCenter(binetIndex, arcCenter, direction);
                 direction += getDirectionChange(spiralDimentions.getAnchorSize() - distanceOnOldArc, binetIndex);
-                DrawPoints.drawPoint(g, arcCenter, Color.PINK);
+//                DrawPoints.drawPoint(g, arcCenter, Color.PINK);
             }
         }
-        DrawPoints.drawPoints(g, anchorPoints, Color.GREEN);
+//        DrawPoints.drawPoints(g, anchorPoints, Color.GREEN);
         return anchorPoints;
     }
 
@@ -69,15 +74,22 @@ public class AnchorPoints {
 
     private double getDirectionChange(double distance, int binetIndex) {
         double radius = getRadius(binetIndex);
-        return 180 * distance / (Math.PI * radius);
+        return 180 * distance / (Math.PI * radius) * (isCounterClockwise ? 1 : -1);
     }
 
     private double distanceLeft(double direction, int binetIndex) {
-
         double radius = getRadius(binetIndex);
-        double degreeLeft = direction - spiralDimentions.getDirection();
-        degreeLeft = 90 - (degreeLeft + 360) % 90;
-        double distanceLeft =2 * Math.PI * radius * degreeLeft / 360;
+        double degreeGone;
+        if (isCounterClockwise) {
+            degreeGone = direction - spiralDimentions.getDirection();
+        } else {
+            degreeGone = spiralDimentions.getDirection() - direction;
+        }
+        degreeGone = Simplify.degree90(degreeGone);
+
+        double degreeLeft = 90 - degreeGone;
+
+        double distanceLeft = 2 * Math.PI * radius * degreeLeft / 360;
         return distanceLeft;
     }
 }

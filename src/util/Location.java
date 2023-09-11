@@ -20,7 +20,7 @@ public class Location {
         while (direction < 0) {
             direction += 360;
         }
-        this.direction = direction % 360;
+        this.direction = Simplify.degree360(direction);
         this.length = (length > 0 ? length : 0);
         this.end = new CCoord(start.getX() + Math.cos(this.direction * Math.PI / 180) * this.length, start.getY() - Math.sin(this.direction * Math.PI / 180) * this.length);
     }

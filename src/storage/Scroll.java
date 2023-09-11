@@ -2,6 +2,7 @@ package storage;
 
 import util.CCoord;
 import util.Location;
+import util.SpiralDimentions;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Scroll {
 
     public Scroll(String text) {
         allParagraphs = new ArrayList<>();
+        allParagraphs.add(new Paragraph(text));
         allParagraphs.add(new Paragraph(text));
         focusParagraph = allParagraphs.get(0);
     }
@@ -89,27 +91,27 @@ public class Scroll {
         boolean isCounterClockwise = false;
         double buffer = (height > width ? height / 10 : width / 10);
 
-        Location scroll = new Location(new CCoord(width / 2, height / 2), 0, height / 2 - buffer);
+        Location scroll = new Location(new CCoord(width / 2, height - buffer), 90, height / 2 - buffer);
 
 
 
-//        if (allParagraphs.size() == 1) {
+        if (allParagraphs.size() == 1) {
             focusParagraph.createSpiral(scroll, width / 2 - buffer, isCounterClockwise, g);
-//            focusParagraph.drawText(g);
+            focusParagraph.drawText(g);
 
-//        } else if (allParagraphs.size() == 2) {
-//            allParagraphs.get(0).createSpiral(scroll, (double) width / 2 - buffer, isCounterClockwise);
-//            allParagraphs.get(0).drawText(g);
-//
-//            SpiralDimentions previous = allParagraphs.get(0).getSpiralDimentions();
-//            double direction = 45;
-//            CCoord newSpiralStart = previous.getExteriorPoint(direction);
-//            Location newSpiral = new Location(newSpiralStart, direction + 90, previous.getLength());
-//
-//            allParagraphs.get(1).createSpiral(newSpiral, (double) width / 2 - buffer, isCounterClockwise);
-//            allParagraphs.get(1).drawText(g);
-//
-//        }
+        } else if (allParagraphs.size() == 2) {
+            allParagraphs.get(0).createSpiral(scroll, width / 2 - buffer, isCounterClockwise, g);
+            allParagraphs.get(0).drawText(g);
+
+            SpiralDimentions previous = allParagraphs.get(0).getSpiralDimentions();
+            double direction = previous.getDirection() + 45;
+            CCoord newSpiralStart = previous.getExteriorPoint(direction, g);
+            Location newSpiral = new Location(newSpiralStart, direction + 90, previous.getLength());
+
+            allParagraphs.get(1).createSpiral(newSpiral, width / 2 - buffer, !isCounterClockwise, g);
+            allParagraphs.get(1).drawText(g);
+
+        }
     }
 
 }
