@@ -17,9 +17,12 @@ public class Location {
 
     public Location(CCoord start, double direction, double length) {
         this.start = start;
-        this.direction = direction;
-        this.length = length;
-        this.end = new CCoord(start.getX() + Math.cos(direction * Math.PI / 180) * length, start.getY() - Math.sin(direction * Math.PI / 180) * length);
+        while (direction < 0) {
+            direction += 360;
+        }
+        this.direction = direction % 360;
+        this.length = (length > 0 ? length : 0);
+        this.end = new CCoord(start.getX() + Math.cos(this.direction * Math.PI / 180) * this.length, start.getY() - Math.sin(this.direction * Math.PI / 180) * this.length);
     }
 
     public CCoord getStart() {

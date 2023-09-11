@@ -1,6 +1,6 @@
 package display;
 
-import translation.Scroll;
+import storage.Scroll;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,12 +10,12 @@ import java.awt.event.KeyListener;
 public class Display extends JPanel implements KeyListener {
 
     private Scroll scroll;
-    private static final int width = 600;
+    private static final int width = 800;
     private static final int height = 800;
 
     public Display() {
         addKeyListener(this);
-        scroll = new Scroll("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        scroll = new Scroll("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
     }
 
     public static void main(String[] args) {

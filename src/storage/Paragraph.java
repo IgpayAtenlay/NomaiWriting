@@ -1,7 +1,8 @@
-package translation;
+package storage;
 
 import characters.Characters;
 import spiral.Spiral;
+import translation.Translator;
 import util.CCoord;
 import util.Location;
 
@@ -27,18 +28,18 @@ public class Paragraph {
         this.future = future;
     }
 
-    public void createSpiral(Location location, double maxWidth, boolean isCounterClockwise) {
+    public void createSpiral(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
         spiral = new Spiral(location.getStart(), location.getDirection(), isCounterClockwise, text.length() + 1, location.getLength(), maxWidth);
-        spiral.createSpiral();
+        spiral.createSpiral(g);
     }
 
-    public void createSpiral(Location location, boolean isCounterClockwise) {
-        createSpiral(location, location.getLength(), isCounterClockwise);
-    }
-
-    public void createSpiral(Location location) {
-        createSpiral(location, true);
-    }
+//    public void createSpiral(Location location, boolean isCounterClockwise) {
+//        createSpiral(location, location.getLength(), isCounterClockwise);
+//    }
+//
+//    public void createSpiral(Location location) {
+//        createSpiral(location, true);
+//    }
 
     public void drawText(Graphics g) {
         CCoord[] letterPoints = spiral.getLetterPoints();
