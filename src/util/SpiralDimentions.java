@@ -46,14 +46,14 @@ public class SpiralDimentions extends Location {
     }
 
     public CCoord getExteriorPoint(double direction) {
-        double directionChange = direction + 90 - getDirection();
+        double directionChange = direction - getDirection() + 180;
         directionChange = directionChange % 360;
         int binetIndex = this.binetIndex;
-        double circleDirection = getDirection();
+        double circleDirection = getDirection() - 90;
+
         CCoord arcCenter = new CCoord();
-        arcCenter.setX(getStartX() - Math.cos(Math.toRadians(getDirection() - 90)) * getRadius(binetIndex));
-        arcCenter.setY(getStartY() + Math.sin(Math.toRadians(getDirection() - 90)) * getRadius(binetIndex));
-        System.out.println(arcCenter);
+        arcCenter.setX(getStartX() - Math.cos(Math.toRadians(getDirection() - 180)) * getRadius(binetIndex));
+        arcCenter.setY(getStartY() + Math.sin(Math.toRadians(getDirection() - 180)) * getRadius(binetIndex));
 
         for (int i = 0; i < (int) (directionChange / 90); i++) {
             double changeRadius = getRadius(binetIndex) - getRadius(binetIndex - 1);
@@ -62,6 +62,7 @@ public class SpiralDimentions extends Location {
             arcCenter = new CCoord(arcCenter.getX() + changeX, arcCenter.getY() + changeY);
             binetIndex--;
             circleDirection += 90;
+            System.out.println(arcCenter);
         }
 
         double radius = getRadius(binetIndex);
