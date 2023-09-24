@@ -5,51 +5,46 @@ import util.Location;
 import util.SpiralDimentions;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Scroll {
-    private List<Paragraph> allParagraphs;
+    private Paragraph rootNode;
     private Paragraph focusParagraph;
     private final Color defaultColor = new Color(140, 130, 255);
     private final BasicStroke defaultSize = new BasicStroke(2);
 
-//    always allParagraphs[0] is start
-//    the rest are in an order based on the inside information
-
     public Scroll(String text) {
-        allParagraphs = new ArrayList<>();
-        allParagraphs.add(new Paragraph(text));
-        allParagraphs.add(new Paragraph(text));
-        focusParagraph = allParagraphs.get(0);
+//        not final form
+        rootNode = new Paragraph(text);
+        focusParagraph = rootNode;
+//        rootNode.addParagraph(text);
+        focusStart();
     }
 
     public Scroll() {
         this("");
     }
-
-    public Paragraph getFocusParagraph() {
-        return focusParagraph;
-    }
-
-    public boolean paragraphForward(int i) {
-        Paragraph future = focusParagraph.getFuture(i);
-        if (future != null) {
-            focusParagraph = future;
-            focusParagraph.focusStart();
+//    change cursor location
+    public boolean nextParagraph(int i) {
+        Paragraph nextParagraph = focusParagraph.getChildNode(i);
+        if (nextParagraph != null) {
+            focusParagraph.unfocus();
+            focusParagraph = nextParagraph;
+            focusParagraph.cursorStart();
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
-    public boolean paragraphForward() {
-        return paragraphForward(0);
+    public boolean nextParagraph() {
+        return nextParagraph(0);
     }
 
-    public boolean paragraphBack() {
-        Paragraph past = focusParagraph.getPast();
-        if (past != null) {
-            focusParagraph = past;
+    public boolean previousParagraph() {
+        Paragraph previousParagraph = focusParagraph.getParentNode();
+        if (previousParagraph != null) {
+            focusParagraph.unfocus();
+            focusParagraph = previousParagraph;
             focusParagraph.focusEnd();
             return true;
         }
@@ -57,24 +52,19 @@ public class Scroll {
     }
 
     public void focusStart() {
-        focusParagraph = allParagraphs.get(0);
-        focusParagraph.focusStart();
+        focusParagraph.unfocus();
+        focusParagraph = rootNode;
+        focusParagraph.cursorStart();
     }
 
     public void stepForward() {
-        boolean atEnd = !focusParagraph.stepForward();
-        if (atEnd) {
-            paragraphForward();
-        }
+        focusParagraph.stepForward();
     }
 
     public void stepBack() {
-        boolean atBeginning = !focusParagraph.stepBack();
-        if (atBeginning) {
-            paragraphBack();
-        }
+        focusParagraph.stepBack();
     }
-
+//    changing text
     public void add(char cha) {
         focusParagraph.add(cha);
     }
@@ -83,6 +73,17 @@ public class Scroll {
         focusParagraph.backspace();
     }
 
+    public void addParagraph(String text) {
+        Paragraph newParagraph = focusParagraph.addParagraph(text);
+        focusParagraph.unfocus();
+        focusParagraph = newParagraph;
+        focusParagraph.cursorStart();
+    }
+
+    public void addParagraph() {
+        addParagraph("");
+    }
+//    visual
     public void drawScroll(Graphics g, double width, double height) {
 //        set graphics
         Graphics2D g2D = (Graphics2D) g;
@@ -93,23 +94,20 @@ public class Scroll {
 
         Location scroll = new Location(new CCoord(width / 2, height - buffer), 90, height / 2 - buffer);
 
+        if (rootNode.getNumParagraphs() == 1) {
+            focusParagraph.drawText(scroll, width / 2 - buffer, isCounterClockwise, g);
 
+        } else if (rootNode.getNumParagraphs() == 2) {
+            Paragraph currentParagraph = rootNode;
+            currentParagraph.drawText(scroll, width / 2 - buffer, isCounterClockwise, g);
 
-        if (allParagraphs.size() == 1) {
-            focusParagraph.createSpiral(scroll, width / 2 - buffer, isCounterClockwise, g);
-            focusParagraph.drawText(g);
-
-        } else if (allParagraphs.size() == 2) {
-            allParagraphs.get(0).createSpiral(scroll, width / 2 - buffer, isCounterClockwise, g);
-            allParagraphs.get(0).drawText(g);
-
-            SpiralDimentions previous = allParagraphs.get(0).getSpiralDimentions();
+            SpiralDimentions previous = currentParagraph.getSpiralDimentions();
             double direction = previous.getDirection() + 45;
-            CCoord newSpiralStart = previous.getExteriorPoint(direction, g);
+            CCoord newSpiralStart = previous.getExteriorPoint(direction);
             Location newSpiral = new Location(newSpiralStart, direction + 90, previous.getLength());
 
-            allParagraphs.get(1).createSpiral(newSpiral, width / 2 - buffer, !isCounterClockwise, g);
-            allParagraphs.get(1).drawText(g);
+            currentParagraph = currentParagraph.getChildNode();
+            currentParagraph.drawText(newSpiral, width / 2 - buffer, !isCounterClockwise, g);
 
         }
     }

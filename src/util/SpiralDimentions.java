@@ -1,9 +1,5 @@
 package util;
 
-import display.DrawPoints;
-
-import java.awt.*;
-
 public class SpiralDimentions extends Location {
     private final boolean isCounterClockwise;
     private final double anchorSize;
@@ -49,7 +45,7 @@ public class SpiralDimentions extends Location {
         return spiralScale;
     }
 
-    public CCoord getExteriorPoint(double direction, Graphics g) {
+    public CCoord getExteriorPoint(double direction) {
         double directionChange;
         if (isCounterClockwise) {
             directionChange = 180 + Simplify.degree360(direction - getDirection());
@@ -71,8 +67,6 @@ public class SpiralDimentions extends Location {
             double changeY = Math.sin(Math.toRadians(circleDirection)) * changeRadius * -1;
             arcCenter = new CCoord(arcCenter.getX() + changeX, arcCenter.getY() + changeY);
             binetIndex--;
-
-            DrawPoints.drawPoint(g, arcCenter, Color.RED);
         }
 
         double radius = getRadius(binetIndex);

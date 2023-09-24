@@ -3,11 +3,9 @@ package spiral;
 import util.CCoord;
 import util.SpiralDimentions;
 
-import java.awt.*;
-
 public class Spiral {
 //    visual
-    private util.SpiralDimentions spiralDimentions;
+    private SpiralDimentions spiralDimentions;
     private int numAnchorPoints;
 //    points
     private CCoord[] anchorPoints;
@@ -18,9 +16,9 @@ public class Spiral {
         this.numAnchorPoints = numAnchorPoints;
     }
 
-    public void createSpiral(Graphics g) {
+    public void createSpiral() {
         AnchorPoints anchorPoints = new AnchorPoints(numAnchorPoints, spiralDimentions);
-        this.anchorPoints = anchorPoints.getAllPoints(g);
+        this.anchorPoints = anchorPoints.getAllPoints();
         this.letterPoints = LetterPoints.getLetterPoints(this.anchorPoints);
     }
 

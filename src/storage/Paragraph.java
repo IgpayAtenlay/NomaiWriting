@@ -5,43 +5,39 @@ import spiral.Spiral;
 import translation.Translator;
 import util.CCoord;
 import util.Location;
+import util.SpiralDimentions;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Paragraph {
     private String text;
-    private Paragraph past;
-    private List<Paragraph> future;
-//    null if no past/future
+    private final Paragraph parentNode;
+    private final List<Paragraph> childNodes;
+
     private Spiral spiral;
     private int cursorLocation;
 
-    public Paragraph(String text) {
+    public Paragraph(String text, Paragraph parentNode, List<Paragraph> childNodes) {
+        cursorLocation = -1;
         this.text = Translator.translate(text);
-        cursorLocation = 0;
+        this.parentNode = parentNode;
+        this.childNodes = childNodes;
     }
 
-    public Paragraph(String text, Paragraph past, List<Paragraph> future) {
-        this(text);
-        this.past = past;
-        this.future = future;
+    public Paragraph(String text, Paragraph parentNode) {
+        this(text, parentNode, new ArrayList<>());
     }
 
-    public void createSpiral(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
+    public Paragraph(String text) {
+        this(text, null);
+    }
+//    visual
+    public void drawText(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
         spiral = new Spiral(location.getStart(), location.getDirection(), isCounterClockwise, text.length() + 1, location.getLength(), maxWidth);
-        spiral.createSpiral(g);
-    }
+        spiral.createSpiral();
 
-//    public void createSpiral(Location location, boolean isCounterClockwise) {
-//        createSpiral(location, location.getLength(), isCounterClockwise);
-//    }
-//
-//    public void createSpiral(Location location) {
-//        createSpiral(location, true);
-//    }
-
-    public void drawText(Graphics g) {
         CCoord[] letterPoints = spiral.getLetterPoints();
         boolean isLeft;
         if (cursorLocation == 0 && text != "") {
@@ -50,6 +46,14 @@ public class Paragraph {
             Location letter = new Location(letterPoints[0], letterPoints[1]);
             double cursorAngle = letter.getDirection() + 90;
             Location cursor = Location.lineWithMidpoint(letter.getStart(), cursorAngle, letter.getLength());
+            cursor.drawLine(g);
+            g.setColor(color);
+        } else if (cursorLocation == 0) {
+            Color color = g.getColor();
+            g.setColor(Color.RED);
+            CCoord point = spiral.getSpiralDimentions().getStart();
+            double cursorAngle = location.getDirection();
+            Location cursor = Location.lineWithMidpoint(point, cursorAngle, location.getLength() / 15);
             cursor.drawLine(g);
             g.setColor(color);
         }
@@ -69,35 +73,54 @@ public class Paragraph {
         }
     }
 //    getters
-    public CCoord[] getLetterPoints() {
-        return spiral.getLetterPoints();
-    }
-
-    public Paragraph getPast() {
-        return past;
-    }
-
-    public Paragraph getFuture(int i) {
-        return future == null ? null : future.get(i);
-    }
-
-    public Paragraph getFuture() {
-        return getFuture(0);
-    }
-
-    public util.SpiralDimentions getSpiralDimentions() {
+    public SpiralDimentions getSpiralDimentions() {
         if (spiral != null) {
             return spiral.getSpiralDimentions();
         }
         return null;
     }
+//    tree stuff
+    public Paragraph getParentNode() {
+        return parentNode;
+    }
+
+    public Paragraph getChildNode(int i) {
+        if (childNodes.size() <= i) {
+            return null;
+        } else {
+            return childNodes.get(i);
+        }
+    }
+
+    public Paragraph getChildNode() {
+        return getChildNode(0);
+    }
+
+    public int getNumParagraphs() {
+        int numOfParagraphs = 1;
+        for (Paragraph paragraph : childNodes) {
+            numOfParagraphs += paragraph.getNumParagraphs();
+        }
+        return numOfParagraphs;
+    }
+    
+    public Paragraph addParagraph(String text) {
+        Paragraph newParagraph = new Paragraph(text, this);
+        childNodes.add(newParagraph);
+        return newParagraph;
+    }
+
 //    cursor location
-    public void focusStart() {
+    public void cursorStart() {
         cursorLocation = 0;
     }
 
     public void focusEnd() {
         cursorLocation = text.length();
+    }
+
+    public void unfocus() {
+        cursorLocation = -1;
     }
 
     public boolean stepForward() {

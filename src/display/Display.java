@@ -10,7 +10,7 @@ import java.awt.event.KeyListener;
 public class Display extends JPanel implements KeyListener {
 
     private Scroll scroll;
-    private static final int width = 800;
+    private static final int width = 1600;
     private static final int height = 800;
 
     public Display() {
@@ -49,16 +49,19 @@ public class Display extends JPanel implements KeyListener {
             scroll.backspace();
             repaint();
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-            scroll.paragraphForward();
+            scroll.nextParagraph();
             repaint();
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            scroll.paragraphBack();
+            scroll.previousParagraph();
             repaint();
         }if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             scroll.stepForward();
             repaint();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             scroll.stepBack();
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            scroll.addParagraph();
             repaint();
         } else if ("abcdefghijklmnopqrstuvwxyz ".contains(e.getKeyChar() + "")) {
             scroll.add(e.getKeyChar());

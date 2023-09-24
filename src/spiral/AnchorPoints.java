@@ -1,12 +1,9 @@
 package spiral;
 
-import display.DrawPoints;
 import util.Binet;
 import util.CCoord;
 import util.Simplify;
 import util.SpiralDimentions;
-
-import java.awt.*;
 
 public class AnchorPoints {
     private final int numAnchorPoints;
@@ -22,8 +19,7 @@ public class AnchorPoints {
         this.isCounterClockwise = spiralDimentions.isCounterClockwise();
     }
 
-    public CCoord[] getAllPoints(Graphics g) {
-        DrawPoints.drawPoint(g, spiralDimentions.getStart(), Color.RED);
+    public CCoord[] getAllPoints() {
         double direction = spiralDimentions.getDirection() + 180;
         direction = Simplify.degree360(direction);
         int binetIndex = spiralDimentions.getBinetIndex();
@@ -31,7 +27,6 @@ public class AnchorPoints {
         CCoord arcCenter = new CCoord();
         arcCenter.setX(spiralDimentions.getStartX() - Math.cos(Math.toRadians(direction)) * getRadius(binetIndex));
         arcCenter.setY(spiralDimentions.getStartY() + Math.sin(Math.toRadians(direction)) * getRadius(binetIndex));
-//        DrawPoints.drawPoint(g, arcCenter, Color.RED);
 //        make all anchor points
         for (int i = 0; i < numAnchorPoints; i++) {
             anchorPoints[i] = getPointHere(direction, binetIndex, arcCenter);
@@ -47,10 +42,8 @@ public class AnchorPoints {
                 binetIndex--;
                 arcCenter = newArcCenter(binetIndex, arcCenter, direction);
                 direction += getDirectionChange(spiralDimentions.getAnchorSize() - distanceOnOldArc, binetIndex);
-//                DrawPoints.drawPoint(g, arcCenter, Color.PINK);
             }
         }
-//        DrawPoints.drawPoints(g, anchorPoints, Color.GREEN);
         return anchorPoints;
     }
 
