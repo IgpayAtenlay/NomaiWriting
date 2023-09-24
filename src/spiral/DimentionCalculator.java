@@ -66,7 +66,6 @@ public class DimentionCalculator {
         this.spiralScale = bestSpiralScale;
         this.anchorSize = calculateAnchorSize(binetNumber, binetIndex, spiralScale);
         this.diameter = calculateSpiralDiameter(binetNumber, binetIndex, spiralScale);
-        System.out.println(binetNumber);
     }
 //    calculations
     private double calculateAnchorSize(double binetNumber, int binetIndex, double spiralScale) {

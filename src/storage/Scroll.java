@@ -37,7 +37,15 @@ public class Scroll {
     }
 
     public boolean nextParagraph() {
-        return nextParagraph(0);
+        Paragraph nextParagraph = focusParagraph.getClosestParagraph();
+        if (nextParagraph != null) {
+            focusParagraph.unfocus();
+            focusParagraph = nextParagraph;
+            focusParagraph.cursorStart();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean previousParagraph() {
@@ -99,23 +107,18 @@ public class Scroll {
         double maxWidth = width / 2 - buffer;
         Paragraph currentParagraph = rootNode;
 
-        if (rootNode.getTotalParagraphs() == 1) {
-            Location location = new Location(new CCoord(width / 2, height - buffer), currentParagraph.getDirection(), height - buffer * 2);
-            currentParagraph.drawText(location, maxWidth, isCounterClockwise, g);
-        } else if (rootNode.getTotalParagraphs() == 2) {
-            Location location = new Location(new CCoord(width / 2, height - buffer), currentParagraph.getDirection(), height - buffer * 2);
+//        draw first spiral
+        Location location = new Location(new CCoord(width / 2, height - buffer), currentParagraph.getDirection(), height - buffer * 2);
+        currentParagraph.drawText(location, maxWidth, isCounterClockwise, g);
 
-            currentParagraph.drawText(location, maxWidth, isCounterClockwise, g);
+//        draw next level
+        SpiralDimentions previousDimentions = currentParagraph.getSpiralDimentions();
+        for (Paragraph child : currentParagraph.getChildNodes()) {
+            CCoord newSpiralStart = previousDimentions.getExteriorPoint(previousDimentions.getDirection() + child.getDirection());
+            isCounterClockwise = child.getDirection() > 0;
+            location = new Location(newSpiralStart, isCounterClockwise ? child.getDirection() + 180 : child.getDirection(), previousDimentions.getLength());
 
-            SpiralDimentions previousDimentions = currentParagraph.getSpiralDimentions();
-            currentParagraph = currentParagraph.getChildNode();
-            CCoord newSpiralStart = previousDimentions.getExteriorPoint(currentParagraph.getDirection() - 90);
-            location = new Location(newSpiralStart, currentParagraph.getDirection(), previousDimentions.getLength());
-
-
-            currentParagraph.drawText(location, maxWidth, !isCounterClockwise, g);
-
+            child.drawText(location, maxWidth, isCounterClockwise, g);
         }
     }
-
 }

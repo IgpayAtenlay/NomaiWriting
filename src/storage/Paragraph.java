@@ -28,15 +28,15 @@ public class Paragraph {
     }
 
     public Paragraph(String text, Paragraph parentNode, int direction) {
-        this(text, parentNode, new ArrayList<>(), parentNode != null ? parentNode.direction + direction : direction);
+        this(text, parentNode, new ArrayList<>(), direction);
     }
 
     public Paragraph(String text, Paragraph parentNode) {
-        this(text, parentNode, parentNode != null ? parentNode.direction : 90);
+        this(text, parentNode, 0);
     }
 
     public Paragraph(String text) {
-        this(text, null);
+        this(text, null, 90);
     }
 //    visual
     public void drawText(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
@@ -84,7 +84,7 @@ public class Paragraph {
         }
         return null;
     }
-    public int getDirection() {
+    public double getDirection() {
         return direction;
     }
 //    tree stuff
@@ -104,6 +104,10 @@ public class Paragraph {
         return getChildNode(0);
     }
 
+    public List<Paragraph> getChildNodes() {
+        return childNodes;
+    }
+
     public int getTotalParagraphs() {
         int numOfParagraphs = 1;
         for (Paragraph paragraph : childNodes) {
@@ -113,9 +117,54 @@ public class Paragraph {
     }
     
     public Paragraph addParagraph(String text) {
-        Paragraph newParagraph = new Paragraph(text, this, 135);
+        int direction = 0;
+        if (childNodes.size() == 0) {
+            direction = 45;
+        } else if (childNodes.size() == 1) {
+            direction = -45;
+        }
+        Paragraph newParagraph = new Paragraph(text, this, direction);
         childNodes.add(newParagraph);
         return newParagraph;
+    }
+
+    public Paragraph getClosestParagraph() {
+        if (childNodes.size() == 0) {
+            return null;
+        }
+
+//        figure this out based on cursor location
+//        this direction is in comparision to the rest of the paragraph
+        double direction;
+
+        if (cursorLocation == 0) {
+            direction = 180;
+        } else {
+            CCoord[] letterPoints = spiral.getLetterPoints();
+            Location letter = new Location(letterPoints[cursorLocation - 1], letterPoints[cursorLocation]);
+            direction = letter.getDirection();
+            direction -= spiral.getDirection() - 90;
+            if (direction > 180) {
+                direction -= 360;
+            }
+            if (cursorLocation > spiral.getLetterPoints().length * 3 / 4 && direction > 0) {
+                direction = -180;
+            }
+        }
+
+        System.out.println("Direction: " + direction);
+
+        double distanceAway = 360;
+        Paragraph closestParagraph = childNodes.get(0);
+        for (Paragraph paragraph : childNodes) {
+            double paragraphDirection = paragraph.getDirection();
+            if (Math.abs(direction - paragraphDirection) < distanceAway) {
+                distanceAway = Math.abs(direction - paragraphDirection);
+                closestParagraph = paragraph;
+            }
+        }
+
+        return closestParagraph;
     }
 
 //    cursor location
@@ -172,4 +221,6 @@ public class Paragraph {
     public void delete(Paragraph paragraph) {
         childNodes.remove(paragraph);
     }
+//    other
+
 }

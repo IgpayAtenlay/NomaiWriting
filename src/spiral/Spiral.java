@@ -29,4 +29,8 @@ public class Spiral {
     public SpiralDimentions getSpiralDimentions() {
         return spiralDimentions;
     }
+
+    public double getDirection() {
+        return spiralDimentions.getDirection();
+    }
 }
