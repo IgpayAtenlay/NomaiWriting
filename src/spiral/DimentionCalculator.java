@@ -5,8 +5,10 @@ import util.CCoord;
 import util.SpiralDimentions;
 
 public class DimentionCalculator {
-    private static final double minBinetNum = 1.2;
-    private static final int maxNumArcs = 10;
+    private static final double minBinetNum = 1.4;
+    private static final double maxBinetNum = 1.8;
+    private static final int minNumArcs = 5;
+    private static final int maxNumArcs = 7;
     private static final double anchorSizeMax = 20;
     private static final double idealBinetNumber = (1 + Math.sqrt(5)) / 2;
     private final int numAnchorPoints;
@@ -36,9 +38,9 @@ public class DimentionCalculator {
         double bestAnchorSize = 0;
         double bestDiameter = 0;
 //        test binet number
-        for (double binetNumber = minBinetNum; binetNumber < 1.70; binetNumber += 0.01) {
+        for (double binetNumber = minBinetNum; binetNumber < maxBinetNum; binetNumber += 0.01) {
 //            test binet index
-            for (int binetIndex = (binetNumber > 1.3 ? 5 : (binetNumber > 1.2 ? 6 : (binetNumber > 1.15 ? 7 : 8))); binetIndex < maxNumArcs; binetIndex++) {
+            for (int binetIndex = minNumArcs; binetIndex < maxNumArcs; binetIndex++) {
 //                test spiral scale
                 for (double spiralScale = 0; spiralScale < calculateMaxSpiralSize(binetNumber, binetIndex, maxDiameter); spiralScale++) {
                     double diameter = calculateSpiralDiameter(binetNumber, binetIndex, spiralScale); /*calculate*/
@@ -64,6 +66,7 @@ public class DimentionCalculator {
         this.spiralScale = bestSpiralScale;
         this.anchorSize = calculateAnchorSize(binetNumber, binetIndex, spiralScale);
         this.diameter = calculateSpiralDiameter(binetNumber, binetIndex, spiralScale);
+        System.out.println(binetNumber);
     }
 //    calculations
     private double calculateAnchorSize(double binetNumber, int binetIndex, double spiralScale) {

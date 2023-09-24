@@ -15,19 +15,24 @@ public class Paragraph {
     private String text;
     private final Paragraph parentNode;
     private final List<Paragraph> childNodes;
-
     private Spiral spiral;
     private int cursorLocation;
+    private int direction;
 
-    public Paragraph(String text, Paragraph parentNode, List<Paragraph> childNodes) {
+    public Paragraph(String text, Paragraph parentNode, List<Paragraph> childNodes, int direction) {
         cursorLocation = -1;
         this.text = Translator.translate(text);
         this.parentNode = parentNode;
         this.childNodes = childNodes;
+        this.direction = direction;
+    }
+
+    public Paragraph(String text, Paragraph parentNode, int direction) {
+        this(text, parentNode, new ArrayList<>(), parentNode != null ? parentNode.direction + direction : direction);
     }
 
     public Paragraph(String text, Paragraph parentNode) {
-        this(text, parentNode, new ArrayList<>());
+        this(text, parentNode, parentNode != null ? parentNode.direction : 90);
     }
 
     public Paragraph(String text) {
@@ -79,6 +84,9 @@ public class Paragraph {
         }
         return null;
     }
+    public int getDirection() {
+        return direction;
+    }
 //    tree stuff
     public Paragraph getParentNode() {
         return parentNode;
@@ -96,16 +104,16 @@ public class Paragraph {
         return getChildNode(0);
     }
 
-    public int getNumParagraphs() {
+    public int getTotalParagraphs() {
         int numOfParagraphs = 1;
         for (Paragraph paragraph : childNodes) {
-            numOfParagraphs += paragraph.getNumParagraphs();
+            numOfParagraphs += paragraph.getTotalParagraphs();
         }
         return numOfParagraphs;
     }
     
     public Paragraph addParagraph(String text) {
-        Paragraph newParagraph = new Paragraph(text, this);
+        Paragraph newParagraph = new Paragraph(text, this, 135);
         childNodes.add(newParagraph);
         return newParagraph;
     }
@@ -147,13 +155,21 @@ public class Paragraph {
         cursorLocation++;
     }
 
-    public void backspace() {
+    public boolean backspace() {
+//        if returns true - delete paragraph
         if (cursorLocation != 0 && text.length() > 1) {
             text = text.substring(0, cursorLocation - 1) + text.substring(cursorLocation);
             cursorLocation--;
         } else if (cursorLocation != 0 && text.length() == 1) {
             text = "";
             cursorLocation = 0;
+        } else if (cursorLocation == 0 && text.length() == 0) {
+            return true;
         }
+        return false;
+    }
+
+    public void delete(Paragraph paragraph) {
+        childNodes.remove(paragraph);
     }
 }
