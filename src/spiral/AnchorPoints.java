@@ -1,47 +1,61 @@
 package spiral;
 
-import util.Binet;
-import util.CCoord;
-import util.Simplify;
-import util.SpiralDimentions;
+import util.*;
 
 public class AnchorPoints {
     private final int numAnchorPoints;
-    private SpiralDimentions spiralDimentions;
+    private SpiralDimention spiralDimention;
+    private Location location;
 //    delete once done
     private final boolean isCounterClockwise;
     private CCoord[] anchorPoints;
 
-    public AnchorPoints(int numAnchorPoints, SpiralDimentions spiralDimentions) {
+    public AnchorPoints(int numAnchorPoints, SpiralLocation spiralLocation) {
+        this(numAnchorPoints,
+                spiralLocation.isCounterClockwise(),
+                new Location(spiralLocation.getStart(), spiralLocation.getEnd()),
+                new SpiralDimention(spiralLocation.getAnchorSize(), spiralLocation.getBinetNumber(), spiralLocation.getLength(), spiralLocation.getBinetIndex(), spiralLocation.getSpiralScale()));
+    }
+
+    public AnchorPoints(int numAnchorPoints, boolean isCounterClockwise, Location location, SpiralDimention spiralDimention) {
         this.numAnchorPoints = numAnchorPoints;
         this.anchorPoints = new CCoord[numAnchorPoints];
-        this.spiralDimentions = spiralDimentions;
-        this.isCounterClockwise = spiralDimentions.isCounterClockwise();
+        this.isCounterClockwise = isCounterClockwise;
+        this.location = location;
+        this.spiralDimention = spiralDimention;
+    }
+
+    public static CCoord[] getAllPoints(int numAnchorPoints, SpiralLocation spiralLocation) {
+        return new AnchorPoints(numAnchorPoints, spiralLocation).getAllPoints();
+    }
+
+    public static CCoord[] getAllPoints(int numAnchorPoints, boolean isCounterClockwise, Location location, SpiralDimention spiralDimention) {
+        return new AnchorPoints(numAnchorPoints, isCounterClockwise, location, spiralDimention).getAllPoints();
     }
 
     public CCoord[] getAllPoints() {
-        double direction = spiralDimentions.getDirection() + 180;
+        double direction = location.getDirection() + 180;
         direction = Simplify.degree360(direction);
-        int binetIndex = spiralDimentions.getBinetIndex();
+        int binetIndex = spiralDimention.getBinetIndex();
 //        get first arc center
         CCoord arcCenter = new CCoord();
-        arcCenter.setX(spiralDimentions.getStartX() - Math.cos(Math.toRadians(direction)) * getRadius(binetIndex));
-        arcCenter.setY(spiralDimentions.getStartY() + Math.sin(Math.toRadians(direction)) * getRadius(binetIndex));
+        arcCenter.setX(location.getStartX() - Math.cos(Math.toRadians(direction)) * getRadius(binetIndex));
+        arcCenter.setY(location.getStartY() + Math.sin(Math.toRadians(direction)) * getRadius(binetIndex));
 //        make all anchor points
         for (int i = 0; i < numAnchorPoints; i++) {
             anchorPoints[i] = getPointHere(direction, binetIndex, arcCenter);
-            if (distanceLeft(direction, binetIndex) > spiralDimentions.getAnchorSize()) {
-                direction += getDirectionChange(spiralDimentions.getAnchorSize(), binetIndex);
+            if (distanceLeft(direction, binetIndex) > spiralDimention.getLetterSize()) {
+                direction += getDirectionChange(spiralDimention.getLetterSize(), binetIndex);
             } else {
                 double distanceOnOldArc = distanceLeft(direction, binetIndex);
                 if (isCounterClockwise) {
-                    direction = Math.ceil((direction - spiralDimentions.getDirection()) / 90) * 90 + spiralDimentions.getDirection();
+                    direction = Math.ceil((direction - location.getDirection()) / 90) * 90 + location.getDirection();
                 } else {
-                    direction = Math.floor((direction - spiralDimentions.getDirection()) / 90) * 90 + spiralDimentions.getDirection();
+                    direction = Math.floor((direction - location.getDirection()) / 90) * 90 + location.getDirection();
                 }
                 binetIndex--;
                 arcCenter = newArcCenter(binetIndex, arcCenter, direction);
-                direction += getDirectionChange(spiralDimentions.getAnchorSize() - distanceOnOldArc, binetIndex);
+                direction += getDirectionChange(spiralDimention.getLetterSize() - distanceOnOldArc, binetIndex);
             }
         }
         return anchorPoints;
@@ -62,7 +76,7 @@ public class AnchorPoints {
     }
 
     private double getRadius(int binetIndex) {
-        return Binet.getBinetValue(binetIndex, spiralDimentions.getBinetNumber()) * spiralDimentions.getSpiralScale();
+        return Binet.getBinetValue(binetIndex, spiralDimention.getBinetNumber()) * spiralDimention.getSpiralScale();
     }
 
     private double getDirectionChange(double distance, int binetIndex) {
@@ -74,9 +88,9 @@ public class AnchorPoints {
         double radius = getRadius(binetIndex);
         double degreeGone;
         if (isCounterClockwise) {
-            degreeGone = direction - spiralDimentions.getDirection();
+            degreeGone = direction - location.getDirection();
         } else {
-            degreeGone = spiralDimentions.getDirection() - direction;
+            degreeGone = location.getDirection() - direction;
         }
         degreeGone = Simplify.degree90(degreeGone);
 

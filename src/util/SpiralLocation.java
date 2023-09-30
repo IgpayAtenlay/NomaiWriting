@@ -1,40 +1,46 @@
 package util;
 
-public class SpiralDimentions extends Location {
+import spiral.AnchorPoints;
+
+public class SpiralLocation extends Location {
     private final boolean isCounterClockwise;
-    private final double anchorSize;
-    private final double binetNumber;
+
+    private SpiralDimention spiralDimention;
     private final int binetIndex;
     private final double spiralScale;
 
-    public SpiralDimentions(CCoord start, CCoord end, boolean isCounterClockwise, double anchorSize, double binetNumber, int binetIndex, double spiralScale) {
+    public SpiralLocation(CCoord start, CCoord end, boolean isCounterClockwise, int binetIndex, double spiralScale) {
         super(start, end);
         this.isCounterClockwise = isCounterClockwise;
-        this.anchorSize = anchorSize;
-        this.binetNumber = binetNumber;
         this.binetIndex = binetIndex;
         this.spiralScale = spiralScale;
     }
 
-    public SpiralDimentions(CCoord start, double direction, double length, boolean isCounterClockwise, double anchorSize, double binetNumber, int binetIndex, double spiralScale) {
-        super(start, direction, length);
+    public SpiralLocation(CCoord start, double direction, double length, boolean isCounterClockwise, double anchorSize, double binetNumber, int binetIndex, double spiralScale) {
+        this(start, direction, isCounterClockwise, binetIndex, spiralScale,
+                new SpiralDimention(anchorSize, binetNumber, length, binetIndex, spiralScale));
+    }
+    public SpiralLocation(CCoord start, double direction, boolean isCounterClockwise, int binetIndex, double spiralScale, SpiralDimention spiralDimention) {
+        super(start, direction, spiralDimention.getLength());
         this.isCounterClockwise = isCounterClockwise;
-        this.anchorSize = anchorSize;
-        this.binetNumber = binetNumber;
         this.binetIndex = binetIndex;
         this.spiralScale = spiralScale;
+        this.spiralDimention = spiralDimention;
     }
 
+        public CCoord[] getLetterPoints(int numAnchorPoints) {
+        return AnchorPoints.getAllPoints(numAnchorPoints, this);
+    }
     public boolean isCounterClockwise() {
         return isCounterClockwise;
     }
 
     public double getAnchorSize() {
-        return anchorSize;
+        return spiralDimention.getLetterSize();
     }
 
     public double getBinetNumber() {
-        return binetNumber;
+        return spiralDimention.getBinetNumber();
     }
 
     public int getBinetIndex() {
@@ -70,13 +76,13 @@ public class SpiralDimentions extends Location {
         }
 
         double radius = getRadius(binetIndex);
-        double changeX = Math.cos(Math.toRadians(direction)) * (radius + anchorSize);
-        double changeY = Math.sin(Math.toRadians(direction)) * (radius + anchorSize) * -1;
+        double changeX = Math.cos(Math.toRadians(direction)) * (radius + spiralDimention.getLetterSize());
+        double changeY = Math.sin(Math.toRadians(direction)) * (radius + spiralDimention.getLetterSize()) * -1;
         return new CCoord(arcCenter.getX() + changeX, arcCenter.getY() + changeY);
 
     }
 
     private double getRadius(int binetIndex) {
-        return Binet.getBinetValue(binetIndex, binetNumber) * spiralScale;
+        return Binet.getBinetValue(binetIndex, spiralDimention.getBinetNumber()) * spiralScale;
     }
 }

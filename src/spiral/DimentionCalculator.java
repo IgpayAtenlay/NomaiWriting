@@ -2,7 +2,7 @@ package spiral;
 
 import util.Binet;
 import util.CCoord;
-import util.SpiralDimentions;
+import util.SpiralLocation;
 
 public class DimentionCalculator {
     private static final double minBinetNum = 1.4;
@@ -26,10 +26,10 @@ public class DimentionCalculator {
         this.maxRadius = maxRadius;
     }
 //    main code
-    public static SpiralDimentions getDimentions(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
+    public static SpiralLocation getDimentions(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
         DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints, maxDiameter, maxRadius);
         spiral.createDimentions();
-        return new SpiralDimentions(start, direction, spiral.diameter, isCounterClockwise, spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
+        return new SpiralLocation(start, direction, spiral.diameter, isCounterClockwise, spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
     }
     public void createDimentions() {
         double bestBinetNumber = 0;

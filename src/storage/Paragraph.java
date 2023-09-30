@@ -1,11 +1,12 @@
 package storage;
 
 import characters.Characters;
-import spiral.Spiral;
+import spiral.AnchorPoints;
+import spiral.DimentionCalculator;
 import translation.Translator;
 import util.CCoord;
 import util.Location;
-import util.SpiralDimentions;
+import util.SpiralLocation;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -13,22 +14,27 @@ import java.util.List;
 
 public class Paragraph {
     private String text;
+//    tree stuff
     private final Paragraph parentNode;
     private final List<Paragraph> childNodes;
-    private Spiral spiral;
     private int cursorLocation;
-    private int direction;
 
-    public Paragraph(String text, Paragraph parentNode, List<Paragraph> childNodes, int direction) {
+//    set visuals
+    private double angleFromParent;
+    private SpiralLocation spiralLocation;
+    private boolean isAutomatic;
+    private double spiralDimention;
+
+    public Paragraph(String text, Paragraph parentNode, List<Paragraph> childNodes, double angleFromParent) {
         cursorLocation = -1;
         this.text = Translator.translate(text);
         this.parentNode = parentNode;
         this.childNodes = childNodes;
-        this.direction = direction;
+        this.angleFromParent = angleFromParent;
     }
 
-    public Paragraph(String text, Paragraph parentNode, int direction) {
-        this(text, parentNode, new ArrayList<>(), direction);
+    public Paragraph(String text, Paragraph parentNode, double angleFromParent) {
+        this(text, parentNode, new ArrayList<>(), angleFromParent);
     }
 
     public Paragraph(String text, Paragraph parentNode) {
@@ -39,11 +45,16 @@ public class Paragraph {
         this(text, null, 90);
     }
 //    visual
-    public void drawText(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
-        spiral = new Spiral(location.getStart(), location.getDirection(), isCounterClockwise, text.length() + 1, location.getLength(), maxWidth);
-        spiral.createSpiral();
+    public void planText(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
+        spiralLocation = DimentionCalculator.getDimentions(location.getStart(), location.getDirection(), isCounterClockwise, text.length() + 1, location.getLength(), maxWidth);
 
-        CCoord[] letterPoints = spiral.getLetterPoints();
+        drawText(location, g);
+    }
+    public void planText(CCoord start, double direction, boolean isCounterClockwise, Graphics g) {
+
+    }
+    public void drawText(Location location, Graphics g) {
+        CCoord[] letterPoints = AnchorPoints.getAllPoints(text.length() + 1, spiralLocation);
         boolean isLeft;
         if (cursorLocation == 0 && text != "") {
             Color color = g.getColor();
@@ -56,7 +67,7 @@ public class Paragraph {
         } else if (cursorLocation == 0) {
             Color color = g.getColor();
             g.setColor(Color.RED);
-            CCoord point = spiral.getSpiralDimentions().getStart();
+            CCoord point = spiralLocation.getStart();
             double cursorAngle = location.getDirection();
             Location cursor = Location.lineWithMidpoint(point, cursorAngle, location.getLength() / 15);
             cursor.drawLine(g);
@@ -78,14 +89,11 @@ public class Paragraph {
         }
     }
 //    getters
-    public SpiralDimentions getSpiralDimentions() {
-        if (spiral != null) {
-            return spiral.getSpiralDimentions();
-        }
-        return null;
+    public SpiralLocation getSpiralDimentions() {
+        return spiralLocation;
     }
-    public double getDirection() {
-        return direction;
+    public double getAngleFromParent() {
+        return angleFromParent;
     }
 //    tree stuff
     public Paragraph getParentNode() {
@@ -140,14 +148,14 @@ public class Paragraph {
         if (cursorLocation == 0) {
             direction = 180;
         } else {
-            CCoord[] letterPoints = spiral.getLetterPoints();
+            CCoord[] letterPoints = spiralLocation.getLetterPoints(text.length() + 1);
             Location letter = new Location(letterPoints[cursorLocation - 1], letterPoints[cursorLocation]);
             direction = letter.getDirection();
-            direction -= spiral.getDirection() - 90;
+            direction -= spiralLocation.getDirection() - 90;
             if (direction > 180) {
                 direction -= 360;
             }
-            if (cursorLocation > spiral.getLetterPoints().length * 3 / 4 && direction > 0) {
+            if (cursorLocation > (text.length() + 1) * 3 / 4 && direction > 0) {
                 direction = -180;
             }
         }
@@ -157,7 +165,7 @@ public class Paragraph {
         double distanceAway = 360;
         Paragraph closestParagraph = childNodes.get(0);
         for (Paragraph paragraph : childNodes) {
-            double paragraphDirection = paragraph.getDirection();
+            double paragraphDirection = paragraph.getAngleFromParent();
             if (Math.abs(direction - paragraphDirection) < distanceAway) {
                 distanceAway = Math.abs(direction - paragraphDirection);
                 closestParagraph = paragraph;

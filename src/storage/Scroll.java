@@ -2,7 +2,7 @@ package storage;
 
 import util.CCoord;
 import util.Location;
-import util.SpiralDimentions;
+import util.SpiralLocation;
 
 import java.awt.*;
 
@@ -78,7 +78,7 @@ public class Scroll {
     }
 
     public void backspace() {
-        if (focusParagraph.backspace()) {
+        if (focusParagraph.backspace() && rootNode.getTotalParagraphs() != 1) {
 //            if it returns true delete the paragraph
             focusParagraph.getParentNode().delete(focusParagraph);
             focusParagraph = focusParagraph.getParentNode();
@@ -108,17 +108,17 @@ public class Scroll {
         Paragraph currentParagraph = rootNode;
 
 //        draw first spiral
-        Location location = new Location(new CCoord(width / 2, height - buffer), currentParagraph.getDirection(), height - buffer * 2);
-        currentParagraph.drawText(location, maxWidth, isCounterClockwise, g);
+        Location location = new Location(new CCoord(width / 2, height - buffer), currentParagraph.getAngleFromParent(), height - buffer * 2);
+        currentParagraph.planText(location, maxWidth, isCounterClockwise, g);
 
 //        draw next level
-        SpiralDimentions previousDimentions = currentParagraph.getSpiralDimentions();
+        SpiralLocation previousDimentions = currentParagraph.getSpiralDimentions();
         for (Paragraph child : currentParagraph.getChildNodes()) {
-            CCoord newSpiralStart = previousDimentions.getExteriorPoint(previousDimentions.getDirection() + child.getDirection());
-            isCounterClockwise = child.getDirection() > 0;
-            location = new Location(newSpiralStart, isCounterClockwise ? child.getDirection() + 180 : child.getDirection(), previousDimentions.getLength());
+            CCoord newSpiralStart = previousDimentions.getExteriorPoint(previousDimentions.getDirection() + child.getAngleFromParent());
+            isCounterClockwise = child.getAngleFromParent() > 0;
+            location = new Location(newSpiralStart, isCounterClockwise ? child.getAngleFromParent() + 180 : child.getAngleFromParent(), previousDimentions.getLength());
 
-            child.drawText(location, maxWidth, isCounterClockwise, g);
+            child.planText(location, maxWidth, isCounterClockwise, g);
         }
     }
 }
