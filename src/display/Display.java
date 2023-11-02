@@ -15,7 +15,7 @@ public class Display extends JPanel implements KeyListener {
 
     public Display() {
         addKeyListener(this);
-        scroll = new Scroll("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+        scroll = new Scroll("hello this is really cool");
     }
 
     public static void main(String[] args) {

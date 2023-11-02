@@ -2,18 +2,37 @@ package translation;
 
 public class Translator {
 
-    public static String translate(String origional) {
-        StringBuilder newString = new StringBuilder();
+    public static String toNomai(String english) {
+        StringBuilder nomai = new StringBuilder();
 
-        for (int i = 0; i < origional.length(); i++) {
-            if (Character.isUpperCase(origional.charAt(i))) {
-                newString.append("^");
-                newString.append(Character.toLowerCase(origional.charAt(i)));
+        for (int i = 0; i < english.length(); i++) {
+            // if uppercase put the "^" symbol in front
+            if (Character.isUpperCase(english.charAt(i))) {
+                nomai.append("^");
+                nomai.append(Character.toLowerCase(english.charAt(i)));
             } else {
-                newString.append(origional.charAt(i));
+                nomai.append(english.charAt(i));
             }
         }
 
-        return newString.toString();
+        return nomai.toString();
+    }
+
+    public static String toEnglish(String nomai) {
+        StringBuilder english = new StringBuilder();
+        for (int i = 0; i < nomai.length(); i++) {
+            if (nomai.charAt(i) == '^') {
+                i++;
+                if (i < nomai.length() && Character.isLowerCase(nomai.charAt(i))) {
+                    english.append(Character.toUpperCase(nomai.charAt(i++)));
+                } else {
+                    return null;
+                }
+            } else {
+                english.append(nomai.charAt(i));
+            }
+        }
+
+        return english.toString();
     }
 }

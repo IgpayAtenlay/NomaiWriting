@@ -10,10 +10,11 @@ import util.SpiralLocation;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Paragraph {
-    private String text;
+    private String nomaiText;
 //    tree stuff
     private final Paragraph parentNode;
     private final List<Paragraph> childNodes;
@@ -25,28 +26,28 @@ public class Paragraph {
     private boolean isAutomatic;
     private double spiralDimention;
 
-    public Paragraph(String text, Paragraph parentNode, List<Paragraph> childNodes, double angleFromParent) {
+    public Paragraph(String englishText, Paragraph parentNode, List<Paragraph> childNodes, double angleFromParent) {
         cursorLocation = -1;
-        this.text = Translator.translate(text);
+        this.nomaiText = Translator.toNomai(englishText);
         this.parentNode = parentNode;
         this.childNodes = childNodes;
         this.angleFromParent = angleFromParent;
     }
 
-    public Paragraph(String text, Paragraph parentNode, double angleFromParent) {
-        this(text, parentNode, new ArrayList<>(), angleFromParent);
+    public Paragraph(String englishText, Paragraph parentNode, double angleFromParent) {
+        this(englishText, parentNode, new ArrayList<>(), angleFromParent);
     }
 
-    public Paragraph(String text, Paragraph parentNode) {
-        this(text, parentNode, 0);
+    public Paragraph(String englishText, Paragraph parentNode) {
+        this(englishText, parentNode, parentNode.newChildAngle());
     }
 
-    public Paragraph(String text) {
-        this(text, null, 90);
+    public Paragraph(String englishText) {
+        this(englishText, null, 90);
     }
 //    visual
     public void planText(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
-        spiralLocation = DimentionCalculator.getDimentions(location.getStart(), location.getDirection(), isCounterClockwise, text.length() + 1, location.getLength(), maxWidth);
+        spiralLocation = DimentionCalculator.getDimentions(location.getStart(), location.getDirection(), isCounterClockwise, nomaiText.length() + 1, location.getLength(), maxWidth);
 
         drawText(location, g);
     }
@@ -54,9 +55,11 @@ public class Paragraph {
 
     }
     public void drawText(Location location, Graphics g) {
-        CCoord[] letterPoints = AnchorPoints.getAllPoints(text.length() + 1, spiralLocation);
+        CCoord[] letterPoints = AnchorPoints.getAllPoints(nomaiText.length() + 1, spiralLocation);
         boolean isLeft;
-        if (cursorLocation == 0 && text != "") {
+
+        // draw cursor (these are execptions)
+        if (cursorLocation == 0 && nomaiText != "") {
             Color color = g.getColor();
             g.setColor(Color.RED);
             Location letter = new Location(letterPoints[0], letterPoints[1]);
@@ -73,10 +76,14 @@ public class Paragraph {
             cursor.drawLine(g);
             g.setColor(color);
         }
-        for (int i = 0; i < text.length(); i++) {
-//            randomize which side the letter is on
+
+        // loop through text
+        for (int i = 0; i < nomaiText.length(); i++) {
+            // randomize which side the letter is on
             isLeft = Math.random() > 0.5;
-            Characters.drawCharacter(g, letterPoints[i], letterPoints[i + 1], isLeft, text.charAt(i));
+            // draw letter
+            Characters.drawCharacter(g, letterPoints[i], letterPoints[i + 1], isLeft, nomaiText.charAt(i));
+            // draw cursor
             if (i == cursorLocation - 1) {
                 Color color = g.getColor();
                 g.setColor(Color.RED);
@@ -88,14 +95,16 @@ public class Paragraph {
             }
         }
     }
-//    getters
+
+    // getters
     public SpiralLocation getSpiralDimentions() {
         return spiralLocation;
     }
     public double getAngleFromParent() {
         return angleFromParent;
     }
-//    tree stuff
+
+    // tree stuff
     public Paragraph getParentNode() {
         return parentNode;
     }
@@ -125,13 +134,7 @@ public class Paragraph {
     }
     
     public Paragraph addParagraph(String text) {
-        int direction = 0;
-        if (childNodes.size() == 0) {
-            direction = 45;
-        } else if (childNodes.size() == 1) {
-            direction = -45;
-        }
-        Paragraph newParagraph = new Paragraph(text, this, direction);
+        Paragraph newParagraph = new Paragraph(text, this);
         childNodes.add(newParagraph);
         return newParagraph;
     }
@@ -148,14 +151,14 @@ public class Paragraph {
         if (cursorLocation == 0) {
             direction = 180;
         } else {
-            CCoord[] letterPoints = spiralLocation.getLetterPoints(text.length() + 1);
+            CCoord[] letterPoints = spiralLocation.getLetterPoints(nomaiText.length() + 1);
             Location letter = new Location(letterPoints[cursorLocation - 1], letterPoints[cursorLocation]);
             direction = letter.getDirection();
             direction -= spiralLocation.getDirection() - 90;
             if (direction > 180) {
                 direction -= 360;
             }
-            if (cursorLocation > (text.length() + 1) * 3 / 4 && direction > 0) {
+            if (cursorLocation > (nomaiText.length() + 1) * 3 / 4 && direction > 0) {
                 direction = -180;
             }
         }
@@ -175,13 +178,45 @@ public class Paragraph {
         return closestParagraph;
     }
 
+    private double newChildAngle() {
+        int max = 180;
+        int min = -90;
+
+        double[] angles = new double[childNodes.size()];
+        for (int i = 0; i < childNodes.size(); i++) {
+            angles[i] = childNodes.get(i).getAngleFromParent();
+        }
+
+        Arrays.sort(angles);
+
+        double biggestGapSize = 0;
+        double biggestGapStart = min;
+
+        double previousAngle = min;
+
+        for (int i = 0; i < angles.length; i++) {
+            if (angles[i] - previousAngle > biggestGapSize) {
+                biggestGapStart = previousAngle;
+                biggestGapSize = angles[i] - previousAngle;
+            }
+            previousAngle = angles[i];
+        }
+
+        if (max - previousAngle > biggestGapSize) {
+            biggestGapStart = previousAngle;
+            biggestGapSize = max - previousAngle;
+        }
+
+        return biggestGapStart + biggestGapSize / 2;
+    }
+
 //    cursor location
     public void cursorStart() {
         cursorLocation = 0;
     }
 
     public void focusEnd() {
-        cursorLocation = text.length();
+        cursorLocation = nomaiText.length();
     }
 
     public void unfocus() {
@@ -189,7 +224,7 @@ public class Paragraph {
     }
 
     public boolean stepForward() {
-        if (cursorLocation < text.length()) {
+        if (cursorLocation < nomaiText.length()) {
             cursorLocation++;
             return true;
         }
@@ -205,22 +240,22 @@ public class Paragraph {
     }
 //    modify string
     public void add(char cha) {
-        String newText = text.substring(0, cursorLocation);
+        String newText = nomaiText.substring(0, cursorLocation);
         newText += cha;
-        newText += text.substring(cursorLocation);
-        text = newText;
+        newText += nomaiText.substring(cursorLocation);
+        nomaiText = newText;
         cursorLocation++;
     }
 
     public boolean backspace() {
-//        if returns true - delete paragraph
-        if (cursorLocation != 0 && text.length() > 1) {
-            text = text.substring(0, cursorLocation - 1) + text.substring(cursorLocation);
+        // returns true if there was no text - delete paragraph
+        if (cursorLocation != 0 && nomaiText.length() > 1) {
+            nomaiText = nomaiText.substring(0, cursorLocation - 1) + nomaiText.substring(cursorLocation);
             cursorLocation--;
-        } else if (cursorLocation != 0 && text.length() == 1) {
-            text = "";
+        } else if (cursorLocation != 0 && nomaiText.length() == 1) {
+            nomaiText = "";
             cursorLocation = 0;
-        } else if (cursorLocation == 0 && text.length() == 0) {
+        } else if (cursorLocation == 0 && nomaiText.length() == 0) {
             return true;
         }
         return false;
