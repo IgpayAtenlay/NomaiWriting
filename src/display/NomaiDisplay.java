@@ -7,35 +7,24 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Display extends JPanel implements KeyListener {
+public class NomaiDisplay extends JPanel implements KeyListener {
 
     private Scroll scroll;
-    private static final int width = 1600;
-    private static final int height = 800;
+    private static final Color backgroundColor = new Color(110, 90, 40);
 
-    public Display() {
+    public NomaiDisplay() {
         addKeyListener(this);
         scroll = new Scroll("hello this is really cool");
-    }
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Nomai");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.setSize(width, height);
-
-        Display display = new Display();
-        frame.add(display);
-        display.requestFocusInWindow();
     }
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 //        make background
-        g.setColor(new Color(110, 90, 40));
-        g.fillRect(0, 0, width, height);
+        g.setColor(backgroundColor);
+        g.fillRect(100, 0, getWidth() - 100, getHeight());
+        g.fillRect(0,30, getWidth(), getHeight() - 30);
 //        draw all spirals
-        scroll.drawScroll(g, width, height);
+        scroll.drawScroll(g, getWidth(), getHeight());
     }
 
     @Override
@@ -63,10 +52,10 @@ public class Display extends JPanel implements KeyListener {
         } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             scroll.addParagraph();
             repaint();
-        } else if ("abcdefghijklmnopqrstuvwxyz ".contains(e.getKeyChar() + "")) {
+        } else if ("abcdefghijklmnopqrstuvwxyz ".contains(Character.toString(e.getKeyChar()))) {
             scroll.add(e.getKeyChar());
             repaint();
-        } else if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(e.getKeyChar() + "")) {
+        } else if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(Character.toString(e.getKeyChar()))) {
             scroll.add('^');
             scroll.add(Character.toLowerCase(e.getKeyChar()));
             repaint();
@@ -76,5 +65,10 @@ public class Display extends JPanel implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    @Override
+    public boolean isFocusable() {
+        return true;
     }
 }

@@ -163,8 +163,6 @@ public class Paragraph {
             }
         }
 
-        System.out.println("Direction: " + direction);
-
         double distanceAway = 360;
         Paragraph closestParagraph = childNodes.get(0);
         for (Paragraph paragraph : childNodes) {
