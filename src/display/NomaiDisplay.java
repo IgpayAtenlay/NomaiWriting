@@ -1,6 +1,7 @@
 package display;
 
 import storage.Scroll;
+import util.EditingForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +12,12 @@ public class NomaiDisplay extends JPanel implements KeyListener {
 
     private Scroll scroll;
     private static final Color backgroundColor = new Color(110, 90, 40);
-    private String editingForm;
+    private EditingForm editingForm;
 
     public NomaiDisplay() {
         addKeyListener(this);
         scroll = new Scroll("hello this is really cool");
-        editingForm = "Typing";
+        editingForm = EditingForm.TYPING;
     }
 
     protected void paintComponent(Graphics g) {
@@ -50,7 +51,7 @@ public class NomaiDisplay extends JPanel implements KeyListener {
             repaint();
         }
 
-        if (editingForm == "Typing") {
+        if (editingForm == EditingForm.TYPING) {
             if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                 scroll.backspace();
                 repaint();
@@ -65,8 +66,14 @@ public class NomaiDisplay extends JPanel implements KeyListener {
                 scroll.add(Character.toLowerCase(e.getKeyChar()));
                 repaint();
             }
-        } else if (editingForm == "Moving") {
-
+        } else if (editingForm == EditingForm.MOVING) {
+            if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
+                scroll.bigger();
+                repaint();
+            } else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
+                scroll.smaller();
+                repaint();
+            }
         }
     }
 
@@ -80,8 +87,10 @@ public class NomaiDisplay extends JPanel implements KeyListener {
         return true;
     }
 
-    public void setEditingForm(String editingForm) {
+    public void setEditingForm(EditingForm editingForm) {
         this.editingForm = editingForm;
+        scroll.setEditingForm(editingForm);
+        repaint();
     }
 
 }

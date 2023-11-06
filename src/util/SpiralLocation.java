@@ -83,6 +83,6 @@ public class SpiralLocation extends Location {
     }
 
     private double getRadius(int binetIndex) {
-        return Binet.getBinetValue(binetIndex, spiralDimention.getBinetNumber()) * spiralScale;
+        return Calculations.getBinetValue(binetIndex, spiralDimention.getBinetNumber()) * spiralScale;
     }
 }

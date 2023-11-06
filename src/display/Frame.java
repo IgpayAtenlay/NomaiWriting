@@ -1,5 +1,7 @@
 package display;
 
+import util.EditingForm;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -29,7 +31,12 @@ public class Frame {
 
         dropdown.addActionListener(e -> {
             // Get the selected item from the JComboBox
-            String selected = (String) dropdown.getSelectedItem();
+            EditingForm selected = null;
+            if (dropdown.getSelectedItem().equals("Typing")) {
+                selected = EditingForm.TYPING;
+            } else if (dropdown.getSelectedItem().equals("Moving")) {
+                selected = EditingForm.MOVING;
+            }
             nomaiDisplay.setEditingForm(selected);
             nomaiDisplay.requestFocusInWindow();
         });

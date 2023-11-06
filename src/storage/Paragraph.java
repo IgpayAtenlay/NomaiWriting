@@ -5,6 +5,7 @@ import spiral.AnchorPoints;
 import spiral.DimentionCalculator;
 import translation.Translator;
 import util.CCoord;
+import util.Calculations;
 import util.Location;
 import util.SpiralLocation;
 
@@ -25,10 +26,11 @@ public class Paragraph {
     private double angleFromParent;
     private double maxDiameter;
     private boolean isCounterClockwise;
+    private double anchorSizeMax;
     private SpiralLocation spiralLocation;
     private boolean isAutomatic;
 
-    public Paragraph(String englishText, Paragraph parentNode, List<Paragraph> childNodes, double angleFromParent, double maxDiameter) {
+    public Paragraph(String englishText, Paragraph parentNode, List<Paragraph> childNodes, double angleFromParent, double maxDiameter, double anchorSizeMax) {
         cursorLocation = -1;
         this.nomaiText = Translator.toNomai(englishText);
         this.parentNode = parentNode;
@@ -36,21 +38,22 @@ public class Paragraph {
         this.angleFromParent = angleFromParent;
         this.maxDiameter = maxDiameter;
         this.isCounterClockwise = true;
+        this.anchorSizeMax = anchorSizeMax;
     }
 
-    public Paragraph(String englishText, Paragraph parentNode, double angleFromParent, double maxDiameter) {
-        this(englishText, parentNode, new ArrayList<>(), angleFromParent, maxDiameter);
+    public Paragraph(String englishText, Paragraph parentNode, double angleFromParent, double maxDiameter, double anchorSizeMax) {
+        this(englishText, parentNode, new ArrayList<>(), angleFromParent, maxDiameter, anchorSizeMax);
     }
 
     public Paragraph(String englishText, Paragraph parentNode) {
-        this(englishText, parentNode, parentNode.newChildAngle(), parentNode.maxDiameter);
+        this(englishText, parentNode, parentNode.newChildAngle(), parentNode.maxDiameter, parentNode.anchorSizeMax);
     }
 
     public Paragraph(String englishText) {
-        this(englishText, null, 90, 600);
+        this(englishText, null, 90, 600, 20);
     }
 
-    // visual
+    // draw visual
     public void drawAll(CCoord start, Graphics g) {
         planText(start, g);
         for (Paragraph child : childNodes) {
@@ -63,7 +66,7 @@ public class Paragraph {
             start = parentNode.spiralLocation.getExteriorPoint(parentNode.spiralLocation.getDirection() + angleFromParent);
             direction = parentNode.spiralLocation.getDirection() + angleFromParent + (isCounterClockwise ? 90 : -90);
         }
-        spiralLocation = DimentionCalculator.getLocation(start, direction, isCounterClockwise, nomaiText.length() + 1, maxDiameter);
+        spiralLocation = DimentionCalculator.getLocation(start, direction, isCounterClockwise, nomaiText.length() + 1, maxDiameter, anchorSizeMax);
 
         drawText(g);
     }
@@ -106,6 +109,27 @@ public class Paragraph {
             Location cursor = Location.lineWithMidpoint(point, cursorAngle, spiralLocation.getLength() / 15);
             cursor.drawLine(g);
             g.setColor(color);
+        }
+    }
+
+    // change visual
+    public void bigger() {
+        double orderOfMagnitude = Calculations.getOrderOfMagnitude(maxDiameter);
+
+        if (maxDiameter >= orderOfMagnitude * 5) {
+            maxDiameter += orderOfMagnitude;
+        } else {
+            maxDiameter += orderOfMagnitude / 10;
+        }
+    }
+
+    public void smaller() {
+        double orderOfMagnitude = Calculations.getOrderOfMagnitude(maxDiameter);
+
+        if (maxDiameter > orderOfMagnitude * 5) {
+            maxDiameter -= orderOfMagnitude;
+        } else {
+            maxDiameter -= orderOfMagnitude / 10;
         }
     }
 

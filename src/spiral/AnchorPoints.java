@@ -69,7 +69,7 @@ public class AnchorPoints {
     }
 
     private double getRadius(int binetIndex) {
-        return Binet.getBinetValue(binetIndex, spiralDimention.getBinetNumber()) * spiralDimention.getSpiralScale();
+        return Calculations.getBinetValue(binetIndex, spiralDimention.getBinetNumber()) * spiralDimention.getSpiralScale();
     }
 
     private double getDirectionChange(double distance, int binetIndex) {

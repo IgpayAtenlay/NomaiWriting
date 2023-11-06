@@ -1,20 +1,22 @@
 package storage;
 
 import util.CCoord;
+import util.EditingForm;
 
 import java.awt.*;
 
 public class Scroll {
     private Paragraph rootNode;
     private Paragraph focusParagraph;
-    private final Color defaultColor = new Color(140, 130, 255);
-    private final BasicStroke defaultSize = new BasicStroke(2);
+    private Color color;
+    private static final BasicStroke size = new BasicStroke(2);
 
     public Scroll(String text) {
         // not final form
         rootNode = new Paragraph(text);
         focusParagraph = rootNode;
         focusStart();
+        setEditingForm(EditingForm.TYPING);
     }
 
     public Scroll() {
@@ -95,13 +97,29 @@ public class Scroll {
         addParagraph("");
     }
 
-    // visual
+    // changing visuals
+    public void bigger() {
+        focusParagraph.bigger();
+    }
+
+    public void smaller() {
+        focusParagraph.smaller();
+    }
+
+    // drawing visuals
+    public void setEditingForm(EditingForm editingForm) {
+        if (editingForm == EditingForm.TYPING) {
+            color = new Color(140, 130, 255);
+        } else if (editingForm == EditingForm.MOVING) {
+            color = new Color(240, 240, 200);
+        }
+    }
     public void drawScroll(Graphics g, double width, double height) {
 
         // set graphics
         Graphics2D g2D = (Graphics2D) g;
-        g.setColor(defaultColor);
-        g2D.setStroke(defaultSize);
+        g.setColor(color);
+        g2D.setStroke(size);
         double buffer = (height > width ? height / 10 : width / 10);
 
         // draw spirals
