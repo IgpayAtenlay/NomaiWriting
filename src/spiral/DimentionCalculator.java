@@ -2,6 +2,7 @@ package spiral;
 
 import util.Binet;
 import util.CCoord;
+import util.SpiralDimention;
 import util.SpiralLocation;
 
 public class DimentionCalculator {
@@ -12,36 +13,51 @@ public class DimentionCalculator {
     private static final double anchorSizeMax = 20;
     private static final double idealBinetNumber = (1 + Math.sqrt(5)) / 2;
     private final int numAnchorPoints;
-    private final double maxDiameter;
-    private final double maxRadius;
     private double anchorSize;
     private double binetNumber;
     private double spiralScale;
     private int binetIndex;
     private double diameter;
-//    constructor
-    public DimentionCalculator(int numAnchorPoints, double maxDiameter, double maxRadius) {
+
+    // constructor
+    public DimentionCalculator(int numAnchorPoints) {
         this.numAnchorPoints = numAnchorPoints;
-        this.maxDiameter = maxDiameter;
-        this.maxRadius = maxRadius;
     }
-//    main code
-    public static SpiralLocation getDimentions(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
-        DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints, maxDiameter, maxRadius);
-        spiral.createDimentions();
+
+    // main code
+    public static SpiralLocation getLocation(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
+        DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints);
+        spiral.createDimentions(maxDiameter, maxRadius);
         return new SpiralLocation(start, direction, spiral.diameter, isCounterClockwise, spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
     }
-    public void createDimentions() {
+    public static SpiralLocation getLocation(CCoord start, double direction, boolean isCounterClockwise, int numAnchorPoints, double diameter) {
+        DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints);
+        spiral.createDimentions(diameter);
+        return new SpiralLocation(start, direction, spiral.diameter, isCounterClockwise, spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
+    }
+    public static SpiralLocation getLocation(SpiralLocation origional, int numAnchorPoints) {
+        DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints);
+        spiral.createDimentions(origional.getLength());
+        return new SpiralLocation(origional.getStart(), origional.getDirection(), spiral.diameter, origional.isCounterClockwise(), spiral.anchorSize, spiral.binetNumber, spiral.binetIndex, spiral.spiralScale);
+
+    }
+    public static SpiralDimention getDimention(boolean isCounterClockwise, int numAnchorPoints, double maxDiameter, double maxRadius) {
+        DimentionCalculator spiral = new DimentionCalculator(numAnchorPoints);
+        spiral.createDimentions(maxDiameter, maxRadius);
+        return new SpiralDimention(spiral.anchorSize, spiral.binetNumber, spiral.diameter, spiral.binetIndex, spiral.spiralScale, isCounterClockwise);
+    }
+
+    public void createDimentions(double maxDiameter, double maxRadius) {
         double bestBinetNumber = 0;
         int bestBinetIndex = 0;
         double bestSpiralScale = 0;
         double bestAnchorSize = 0;
         double bestDiameter = 0;
-//        test binet number
+        // test binet number
         for (double binetNumber = minBinetNum; binetNumber < maxBinetNum; binetNumber += 0.01) {
-//            test binet index
+            // test binet index
             for (int binetIndex = minNumArcs; binetIndex < maxNumArcs; binetIndex++) {
-//                test spiral scale
+                // test spiral scale
                 for (double spiralScale = 0; spiralScale < calculateMaxSpiralSize(binetNumber, binetIndex, maxDiameter); spiralScale++) {
                     double diameter = calculateSpiralDiameter(binetNumber, binetIndex, spiralScale); /*calculate*/
                     double radius = calculateSpiralRadius(binetNumber, binetIndex, spiralScale); /*calculate*/
@@ -60,14 +76,18 @@ public class DimentionCalculator {
             }
         }
 
-//        set it
+        // set it
         this.binetNumber = bestBinetNumber;
         this.binetIndex = bestBinetIndex;
         this.spiralScale = bestSpiralScale;
         this.anchorSize = calculateAnchorSize(binetNumber, binetIndex, spiralScale);
         this.diameter = calculateSpiralDiameter(binetNumber, binetIndex, spiralScale);
     }
-//    calculations
+    public void createDimentions(double maxDiameter) {
+        createDimentions(maxDiameter, maxDiameter);
+    }
+
+    // calculations
     private double calculateAnchorSize(double binetNumber, int binetIndex, double spiralScale) {
         return calculateSpiralLength(binetNumber, binetIndex, spiralScale) / numAnchorPoints;
     }
@@ -98,16 +118,17 @@ public class DimentionCalculator {
     private double calculateMaxSpiralSize(double binetNumber, int binetIndex, double length) {
         return length / calculateRelativeSpiralDiameter(binetNumber, binetIndex);
     }
-    //    to string
+
+    // to string
     @Override
     public String toString() {
-        return "SpiralDimentions{" +
+        return "DimentionCalculator{" +
                 "numAnchorPoints=" + numAnchorPoints +
-                ", maxDiameter=" + maxDiameter +
-                ", letterSize=" + anchorSize +
+                ", anchorSize=" + anchorSize +
                 ", binetNumber=" + binetNumber +
                 ", spiralScale=" + spiralScale +
                 ", binetIndex=" + binetIndex +
+                ", diameter=" + diameter +
                 '}';
     }
 }

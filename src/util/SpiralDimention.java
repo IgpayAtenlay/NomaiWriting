@@ -5,16 +5,22 @@ public class SpiralDimention {
     private double letterSize;
     private double binetNumber;
     private double length;
-//    calculated
+    private boolean counterClockwise;
+    // calculated
     private int binetIndex;
     private double spiralScale;
 
-    public SpiralDimention(double letterSize, double binetNumber, double length, int binetIndex, double spiralScale) {
+    public SpiralDimention(double letterSize, double binetNumber, double length, int binetIndex, double spiralScale, boolean counterClockwise) {
         this.letterSize = letterSize;
         this.binetNumber = binetNumber;
         this.length = length;
         this.binetIndex = binetIndex;
         this.spiralScale = spiralScale;
+        this.counterClockwise = counterClockwise;
+    }
+
+    public SpiralDimention(double letterSize, double binetNumber, double length, int binetIndex, double spiralScale) {
+        this(letterSize, binetNumber, length, binetIndex, spiralScale, true);
     }
 
     public double getLetterSize() {
@@ -35,5 +41,9 @@ public class SpiralDimention {
 
     public double getSpiralScale() {
         return spiralScale;
+    }
+
+    public boolean isCounterClockwise() {
+        return counterClockwise;
     }
 }

@@ -20,7 +20,8 @@ public abstract class Characters {
     protected final Location location;
     protected List<Location> lines;
     protected List<Location> circles;
-//    constructor
+
+    // constructor
     public Characters(CCoord start, CCoord end, boolean isLeft) {
         this(new Location(start, end), isLeft);
     }
@@ -35,7 +36,8 @@ public abstract class Characters {
         this.lines = new ArrayList<>();
         this.circles = new ArrayList<>();
     }
-//    drawing lines
+
+    // drawing lines
     protected void planLine(CCoord start, CCoord end) {
         lines.add(new Location(start, end));
     }
@@ -55,7 +57,8 @@ public abstract class Characters {
         planCircle(start, end);
         return end;
     }
-//    transform variables
+
+    // transform variables
     protected CCoord getNewCoords(CCoord start, double direction, double length) {
         double realDirection = location.getDirection() + direction * (isLeft ? 1 : -1);
         double realLength = length / 100 * location.getLength();
@@ -86,13 +89,16 @@ public abstract class Characters {
             g.drawOval((int) circleLocation.getX(), (int) circleLocation.getY(), (int) radius * 2, (int) radius * 2);
         }
     }
-//    abstract methods
+
+    // abstract methods
     protected abstract void planCharacter();
-//    new character
+
+    // new character
     public static void drawCharacter(Graphics g, CCoord start, CCoord end, boolean isLeft, char cha) {
         Characters base = null;
         Characters addOns = null;
-//        which base is it?
+
+        // which base is it?
         if ("glxy".contains(cha + "")) {
             base = new Diamond(start, end, isLeft);
         } else if ("depqt".contains(cha + "")) {
@@ -112,13 +118,13 @@ public abstract class Characters {
         }
         if (base != null) {
             base.drawCharacter(g);
-    //            is it a letter?
+            // is it a letter?
             if (base instanceof BaseLetters letter) {
-    //                addon information
+                // addon information
                 int direction = letter.getAddOnDirection();
                 int size = (int) letter.location.getLength();
                 CCoord addOnStart = letter.getAddOnCoords();
-    //                which addOn is it?
+                // which addOn is it?
                 if ("aeiouy".contains(cha + "")) {
                     addOns = new Slash(addOnStart, direction, size, isLeft);
                 } else if ("bjkpvx".contains(cha + "")) {

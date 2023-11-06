@@ -24,7 +24,7 @@ public abstract class BaseLetters extends Characters {
         planLine(start, location.getEnd());
     }
 
-//    all of these are incorrect - barring diamond
+    // all of these are incorrect - barring diamond
     public abstract CCoord getAddOnCoords();
 
     public int getAddOnDirection() {

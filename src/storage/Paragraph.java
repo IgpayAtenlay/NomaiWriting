@@ -15,67 +15,61 @@ import java.util.List;
 
 public class Paragraph {
     private String nomaiText;
-//    tree stuff
+
+    // tree stuff
     private final Paragraph parentNode;
     private final List<Paragraph> childNodes;
     private int cursorLocation;
 
-//    set visuals
+    // set visuals
     private double angleFromParent;
+    private double maxDiameter;
+    private boolean isCounterClockwise;
     private SpiralLocation spiralLocation;
     private boolean isAutomatic;
-    private double spiralDimention;
 
-    public Paragraph(String englishText, Paragraph parentNode, List<Paragraph> childNodes, double angleFromParent) {
+    public Paragraph(String englishText, Paragraph parentNode, List<Paragraph> childNodes, double angleFromParent, double maxDiameter) {
         cursorLocation = -1;
         this.nomaiText = Translator.toNomai(englishText);
         this.parentNode = parentNode;
         this.childNodes = childNodes;
         this.angleFromParent = angleFromParent;
+        this.maxDiameter = maxDiameter;
+        this.isCounterClockwise = true;
     }
 
-    public Paragraph(String englishText, Paragraph parentNode, double angleFromParent) {
-        this(englishText, parentNode, new ArrayList<>(), angleFromParent);
+    public Paragraph(String englishText, Paragraph parentNode, double angleFromParent, double maxDiameter) {
+        this(englishText, parentNode, new ArrayList<>(), angleFromParent, maxDiameter);
     }
 
     public Paragraph(String englishText, Paragraph parentNode) {
-        this(englishText, parentNode, parentNode.newChildAngle());
+        this(englishText, parentNode, parentNode.newChildAngle(), parentNode.maxDiameter);
     }
 
     public Paragraph(String englishText) {
-        this(englishText, null, 90);
+        this(englishText, null, 90, 600);
     }
-//    visual
-    public void planText(Location location, double maxWidth, boolean isCounterClockwise, Graphics g) {
-        spiralLocation = DimentionCalculator.getDimentions(location.getStart(), location.getDirection(), isCounterClockwise, nomaiText.length() + 1, location.getLength(), maxWidth);
 
-        drawText(location, g);
+    // visual
+    public void drawAll(CCoord start, Graphics g) {
+        planText(start, g);
+        for (Paragraph child : childNodes) {
+            child.drawAll(start, g);
+        }
     }
-    public void planText(CCoord start, double direction, boolean isCounterClockwise, Graphics g) {
+    public void planText(CCoord start, Graphics g) {
+        double direction = angleFromParent;
+        if (parentNode != null) {
+            start = parentNode.spiralLocation.getExteriorPoint(parentNode.spiralLocation.getDirection() + angleFromParent);
+            direction = parentNode.spiralLocation.getDirection() + angleFromParent + (isCounterClockwise ? 90 : -90);
+        }
+        spiralLocation = DimentionCalculator.getLocation(start, direction, isCounterClockwise, nomaiText.length() + 1, maxDiameter);
 
+        drawText(g);
     }
-    public void drawText(Location location, Graphics g) {
+    public void drawText(Graphics g) {
         CCoord[] letterPoints = AnchorPoints.getAllPoints(nomaiText.length() + 1, spiralLocation);
         boolean isLeft;
-
-        // draw cursor (these are execptions)
-        if (cursorLocation == 0 && nomaiText != "") {
-            Color color = g.getColor();
-            g.setColor(Color.RED);
-            Location letter = new Location(letterPoints[0], letterPoints[1]);
-            double cursorAngle = letter.getDirection() + 90;
-            Location cursor = Location.lineWithMidpoint(letter.getStart(), cursorAngle, letter.getLength());
-            cursor.drawLine(g);
-            g.setColor(color);
-        } else if (cursorLocation == 0) {
-            Color color = g.getColor();
-            g.setColor(Color.RED);
-            CCoord point = spiralLocation.getStart();
-            double cursorAngle = location.getDirection();
-            Location cursor = Location.lineWithMidpoint(point, cursorAngle, location.getLength() / 15);
-            cursor.drawLine(g);
-            g.setColor(color);
-        }
 
         // loop through text
         for (int i = 0; i < nomaiText.length(); i++) {
@@ -94,12 +88,28 @@ public class Paragraph {
                 g.setColor(color);
             }
         }
+
+        // draw cursor exceptions
+        if (cursorLocation == 0 && nomaiText != "") {
+            Color color = g.getColor();
+            g.setColor(Color.RED);
+            Location letter = new Location(letterPoints[0], letterPoints[1]);
+            double cursorAngle = letter.getDirection() + 90;
+            Location cursor = Location.lineWithMidpoint(letter.getStart(), cursorAngle, letter.getLength());
+            cursor.drawLine(g);
+            g.setColor(color);
+        } else if (cursorLocation == 0) {
+            Color color = g.getColor();
+            g.setColor(Color.RED);
+            CCoord point = spiralLocation.getStart();
+            double cursorAngle = spiralLocation.getDirection();
+            Location cursor = Location.lineWithMidpoint(point, cursorAngle, spiralLocation.getLength() / 15);
+            cursor.drawLine(g);
+            g.setColor(color);
+        }
     }
 
     // getters
-    public SpiralLocation getSpiralDimentions() {
-        return spiralLocation;
-    }
     public double getAngleFromParent() {
         return angleFromParent;
     }
@@ -144,8 +154,8 @@ public class Paragraph {
             return null;
         }
 
-//        figure this out based on cursor location
-//        this direction is in comparision to the rest of the paragraph
+        // based on cursor location
+        // direction in comparision to the current spiral
         double direction;
 
         if (cursorLocation == 0) {
@@ -208,7 +218,7 @@ public class Paragraph {
         return biggestGapStart + biggestGapSize / 2;
     }
 
-//    cursor location
+    // cursor location
     public void cursorStart() {
         cursorLocation = 0;
     }
@@ -236,7 +246,8 @@ public class Paragraph {
         }
         return false;
     }
-//    modify string
+
+    // modify string
     public void add(char cha) {
         String newText = nomaiText.substring(0, cursorLocation);
         newText += cha;
@@ -262,6 +273,5 @@ public class Paragraph {
     public void delete(Paragraph paragraph) {
         childNodes.remove(paragraph);
     }
-//    other
 
 }

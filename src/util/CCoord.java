@@ -1,6 +1,6 @@
 package util;
 
-//    short for Cartesian coord
+// short for Cartesian coord
 public class CCoord extends Coord{
     private double x;
     private double y;

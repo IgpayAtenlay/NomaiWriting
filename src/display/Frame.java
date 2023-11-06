@@ -23,13 +23,14 @@ public class Frame {
         panel.add(nomaiDisplay);
 
         // dropdown menu
-        JComboBox<String> dropdown = new JComboBox<>(new String[] {"Option 1", "Option 2", "Option 3", "Option 4"});
+        JComboBox<String> dropdown = new JComboBox<>(new String[] {"Typing", "Moving"});
         dropdown.setBounds(0,0,100,30);
         panel.add(dropdown);
 
         dropdown.addActionListener(e -> {
             // Get the selected item from the JComboBox
             String selected = (String) dropdown.getSelectedItem();
+            nomaiDisplay.setEditingForm(selected);
             nomaiDisplay.requestFocusInWindow();
         });
 

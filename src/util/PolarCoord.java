@@ -1,7 +1,7 @@
 package util;
 
 public class PolarCoord extends Coord{
-//    in degrees
+    // in degrees
     private final double direction;
     private final double percentLength;
 
