@@ -281,14 +281,14 @@ public class Paragraph {
     }
 
     public boolean backspace() {
-        // returns true if there was no text - delete paragraph
+        // returns true if there was no text and no children - delete paragraph
         if (cursorLocation != 0 && nomaiText.length() > 1) {
             nomaiText = nomaiText.substring(0, cursorLocation - 1) + nomaiText.substring(cursorLocation);
             cursorLocation--;
         } else if (cursorLocation != 0 && nomaiText.length() == 1) {
             nomaiText = "";
             cursorLocation = 0;
-        } else if (cursorLocation == 0 && nomaiText.length() == 0) {
+        } else if (cursorLocation == 0 && nomaiText.length() == 0 && childNodes.size() == 0) {
             return true;
         }
         return false;
